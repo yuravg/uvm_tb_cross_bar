@@ -1,0 +1,126 @@
+#+title: SystemVerilog UVM testbench example
+#+author: Yuriy Gritsenko
+#+startup: inlineimages
+
+=uvm_tb_cross_bar= is my a SystemVerilog UVM example.
+It has DUT, testbench and scripts to run simulation.
+
+* DUT
+A =cross_bar= project is used as DUT, this is just a bus switcher([[./rtl/doc/README.md][specification]]).
+Used my implementation of this design.
+
+=DUT= implementation is located in the =rtl= directory.
+
+** RTL synthesis
+
+For RTL synthesis is used Intel Quartus Prime, example is located in the =quartus= directory.
+
+* Testbench
+The testbench has /bus/ and /cross-bar/ UVC.
+
+/Bus/ UVC has /agent/ and /sequences/ packages.
+
+/Cross-bar/ UVC has /agent/, /layer/ and /virtual_sequences/ packages.
+The /layer/ provides connectivity /cross-bar/ and /bus/ UVC.
+
+/Env/ connected DUT, UVC and /scoreboard/.
+The /scoreboard/ is checking results of each /tests/.
+
+SystemVerilog UVM tesbench is located in the =uvm_tb= directory.
+
+* Simulation
+To run simulation of this example used Mentor Graphic's QuestaSim or ModelSim simulator.
+
+Directory =sim= contains files to run simulation.
+
+Following examples of commands to be run from the =sim= directory.
+
+** Common
+To run the simulation used console and make-file.
+
+To get list of available commands or =list of tests= should run following command from console:
+
+#+BEGIN_SRC shell-script
+$ make help
+#+END_SRC
+
+** Run complete verification
+Run command from console:
+
+#+BEGIN_SRC shell-script
+$ make all_tests
+#+END_SRC
+
+The results of each test and a summary of all the tests are displayed in the console.
+
+Each test writes a log and report files: <test_name>.log, <test_name>.log.rpt
+(report file - it is just reformatted the log file).
+
+*** Log-file output example
+
+[[./images/end_of_test_log.png]]
+
+*** Rpt-file output example
+
+[[./images/end_of_test_rpt.png]]
+
+*** Summary example
+
+[[./images/summary.png]]
+
+** Run some test
+At this example there are following ways to run tests:
+1. run test in console(without GUI)
+2. run test with GUI from console
+3. run test from GUI
+
+*** 1. Run test in console(without GUI)
+To run test just run command from console:
+
+#+BEGIN_SRC shell-script
+$ make <test_name>
+#+END_SRC
+
+<test_name> - name from =list of tests=
+
+*** 2. run test with GUI from console
+Should set empty environment variable /VSIM_MODE/, and run test in console (example for BASH):
+
+#+BEGIN_SRC shell-script
+$ export VSIM_MODE=''
+$ make <test_name>
+#+END_SRC
+or
+#+BEGIN_SRC shell-script
+$ make <test_name> VSIM_MODE=''
+#+END_SRC
+
+<test_name> - name from =list of tests=
+
+*** 3. run test from GUI
+Run ModelSim/QuestaSim, load aliases, run test.
+
+- Run ModelSim/QuestaSim in =sim= directory
+#+BEGIN_SRC shell-script
+$ vsim `pwd` &
+#+END_SRC
+
+- run in ModelSim/QuestaSim _Transcript_ window
+#+BEGIN_SRC tcl
+do alias.do
+#+END_SRC
+
+- run test
+#+BEGIN_SRC tcl
+run_<test_name>
+#+END_SRC
+
+* Screenshots
+
+Mentor Graphic's QuestaSim wave
+
+[[./images/wave.png]]
+
+* License
+
+This project is licensed under the MIT License. If not, see [[https://www.opensource.org/licenses/MIT]]
