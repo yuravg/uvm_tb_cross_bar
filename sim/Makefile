@@ -98,12 +98,12 @@ sim_gui:
 		$(WIN_OS_BG)
 
 write_rpt:
-	@-if [ "$(WRITE_RPT)" = "yes" ]; then             \
-		if [ "$(UVM_TEST)".log = "" ]; then           \
-		  exit 1;                                     \
-		else                                          \
-		  scripts/write_report.tcl "$(UVM_TEST)".log; \
-		fi                                            \
+	@-if [ "$(WRITE_RPT)" = "yes" ]; then            \
+		if [ "$(UVM_TEST)".log = "" ]; then          \
+		  exit 1;                                    \
+		else                                         \
+		  scripts/write_report.pl "$(UVM_TEST)".log; \
+		fi                                           \
 	  fi
 
 .PHONY: clean_log clean
