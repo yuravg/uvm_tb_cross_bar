@@ -4,6 +4,14 @@
 // License : MIT License
 //-----------------------------------------------------------------------------
 
+// TODO: assertion
+// 1. only one grant
+// 2. if there are not grant then not request
+// 3. ack only if there is request
+// 4. only one ack
+// 5. can't change req until grant
+// etc.
+
 import bus_if_pkg::*;
 
 module cross_bar(
