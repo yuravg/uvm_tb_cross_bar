@@ -11,11 +11,11 @@ class bus_seq_item extends uvm_sequence_item;
   rand bit [31:0] wdata;
   rand bit [31:0] rdata;
 
-  typedef enum {INIT, IDLE, READ, WRITE, ACK} operation_t;
-  rand operation_t operation;
+  typedef enum {INIT, IDLE, READ, WRITE, ACK} operation_e;
+  rand operation_e operation;
 
   extern function new(string name = "");
-  extern function operation_t cmd2operation(input bit cmd);
+  extern function operation_e cmd2operation(input bit cmd);
   extern function bit write_operation();
   extern function bit read_operation();
   extern function string convert2string();
@@ -31,8 +31,8 @@ function bus_seq_item::new(string name = "");
 endfunction : new
 
 
-function bus_seq_item::operation_t bus_seq_item::cmd2operation(input bit cmd);
-  operation_t op;
+function bus_seq_item::operation_e bus_seq_item::cmd2operation(input bit cmd);
+  operation_e op;
   if (cmd)
     op = WRITE;
   else

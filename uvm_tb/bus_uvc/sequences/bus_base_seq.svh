@@ -13,7 +13,7 @@ class bus_base_seq extends uvm_sequence #(bus_seq_item);
   rand bit [31:0]  wdata;
   rand bit [31:0]  rdata;
 
-  rand bus_seq_item::operation_t operation;
+  rand bus_seq_item::operation_e operation;
   bus_seq_item item;
 
   extern virtual task body();
