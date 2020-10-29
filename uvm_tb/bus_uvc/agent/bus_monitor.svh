@@ -9,7 +9,7 @@ class bus_monitor extends uvm_monitor;
 
   uvm_analysis_port #(bus_seq_item) ap;
 
-  driver_mode_enum driver_mode = NORMAL;
+  driver_mode_e driver_mode = NORMAL;
   bus_vif vif;
 
   extern function new(string name, uvm_component parent);

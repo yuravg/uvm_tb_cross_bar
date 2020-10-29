@@ -8,7 +8,7 @@ class bus_config extends uvm_object;
   `uvm_object_utils(bus_config)
 
   bus_vif vif;
-  driver_mode_enum driver_mode = NORMAL;
+  driver_mode_e driver_mode = NORMAL;
 
   extern function new(string name = "");
 

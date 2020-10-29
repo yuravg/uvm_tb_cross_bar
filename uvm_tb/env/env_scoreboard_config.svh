@@ -7,7 +7,7 @@
 class env_scoreboard_config extends uvm_object;
   `uvm_object_utils(env_scoreboard_config)
 
-  test_name_enum test_name = UNDEFINED;
+  test_name_e test_name = UNDEFINED;
 
   extern function new(string name = "");
 

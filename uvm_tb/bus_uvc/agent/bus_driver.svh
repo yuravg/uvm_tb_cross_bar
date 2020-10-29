@@ -8,7 +8,7 @@ class bus_driver extends uvm_driver #(bus_seq_item);
   `uvm_component_utils(bus_driver)
 
   bus_vif vif;
-  driver_mode_enum driver_mode = NORMAL;
+  driver_mode_e driver_mode = NORMAL;
 
   extern function new(string name, uvm_component parent);
   extern function void build_phase(uvm_phase phase);

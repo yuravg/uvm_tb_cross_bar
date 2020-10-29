@@ -16,7 +16,7 @@ package env_pkg;
   import cross_bar_agent_pkg::*;
   import cross_bar_layering_pkg::*;
 
-  typedef enum {UNDEFINED, ARBITRAGE} test_name_enum;
+  typedef enum {UNDEFINED, ARBITRAGE} test_name_e;
   `include "env_scoreboard_config.svh"
   `include "env_scoreboard.svh"
 

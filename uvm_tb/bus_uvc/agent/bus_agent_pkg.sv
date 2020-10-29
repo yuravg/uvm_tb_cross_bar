@@ -17,7 +17,7 @@ package bus_agent_pkg;
   typedef uvm_sequencer #(bus_seq_item) bus_sequencer;
   typedef virtual bus_if bus_vif;
 
-  typedef enum bit {ACK=0, NORMAL=1} driver_mode_enum;
+  typedef enum bit {ACK=0, NORMAL=1} driver_mode_e;
 
   `include "bus_driver.svh"
   `include "bus_monitor.svh"
