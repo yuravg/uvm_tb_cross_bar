@@ -4,10 +4,11 @@
 
 use warnings;
 use strict;
+use File::Basename qw(basename);
 use POSIX qw(strftime);
-use 5.010;
+use v5.10;
 
-my $script_name = $0;
+my $script_name = basename($0);
 
 sub usage {
     print " Usage: $script_name <log_file>\n";
@@ -17,66 +18,48 @@ sub usage {
 {
     if (@ARGV != 1) {
         usage();
-        die "Not enough arguments!\n";
+        die "ERROR! Not enough arguments!\n";
     }
 
-    my $fname = $ARGV[0];
+    my $in_fname = shift(@ARGV);
+    $_ = $in_fname;
+    my $out_fname = /\.log$/ ? (s/log$/rpt/r) : ($_ .= '.rpt');
+    my ($in_fh, $out_fh);
+    open($in_fh, "<", $in_fname) or die "Can't open input file: $in_fname.$!\n";
+    open($out_fh, ">", $out_fname) or die "Can't open output file: $out_fname. $!\n";
 
-    open(LOG, "<", $fname)
-        or die "Couldn't open '$fname' : $!";
+    my $part = 'header';
+    while (<$in_fh>) {
+        if (/Running test/) {
+            $part = 'log';
+        } elsif (/UVM Report Summary/) {
+            $part = 'summary';
+        }
 
-    $_ = $fname;
-    &rename_log();
-    my $out_file = $_;
-    open(RPT, ">", $out_file)
-        or die "Couldn't open(output file) '$fname' : $!";
+        if ($part =~ 'header') {
+            header_parser();
+        } elsif ($part =~ 'log') {
+            log_parser();
+        } elsif ($part =~ 'summary') {
+            summary_parser();
+        }
+        print $out_fh $_;
+    }
+    my $timestamp = strftime("%d/%m/%y %H:%M:%S", localtime);
+    print $out_fh "\n(timestamp: $timestamp)\n";
 
-    &parser2rpt();
-
-    close(LOG);
-    close(RPT);
-    print "Write report: '$out_file'.\n";
+    close($out_fh);
+    close($in_fh);
+    print "Write report: '$out_fname'.\n";
 
     exit 0;
 }
 
-sub rename_log {
-    if (/\.log$/) {
-        s/log$/rpt/;
-    } else {
-        $_ .= '.rpt';
-    }
-}
-
-
-sub parser2rpt {
-    my $part = 1;
-
-    while (<LOG>) {
-        if (/Running test/) {
-            $part = 2;
-        } elsif (/UVM Report Summary/) {
-            $part = 3;
-        }
-
-        if ($part == 1) {
-            &parser_header();
-        } elsif ($part == 2) {
-            &parser_log();
-        } elsif ($part == 3) {
-            &parser_summary();
-        }
-        print RPT $_;
-    }
-    my $timestamp = strftime("%d/%m/%y %H:%M:%S", localtime);
-    print RPT "\n(timestamp: $timestamp)\n";
-}
-
-sub parser_header {
+sub header_parser {
     $_ = '';
 }
 
-sub parser_log {
+sub log_parser {
     my $str = $_;
     if (/reporter \[RNTST\] Running test/) {
         s/.*(0:) reporter/$1/;
@@ -90,6 +73,6 @@ sub parser_log {
     }
 }
 
-sub parser_summary {
+sub summary_parser {
     s/^# //;
 }
