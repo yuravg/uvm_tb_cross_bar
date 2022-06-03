@@ -4,8 +4,8 @@
 // License : MIT License
 //-----------------------------------------------------------------------------
 
-class tb_env extends uvm_env;
-  `uvm_component_utils(tb_env)
+class env extends uvm_env;
+  `uvm_component_utils(env)
 
   bus_agent          magt[2];
   bus_agent          sagt[2];
@@ -18,15 +18,15 @@ class tb_env extends uvm_env;
   extern function void build_phase(uvm_phase phase);
   extern function void connect_phase(uvm_phase phase);
 
-endclass : tb_env
+endclass : env
 
 
-function tb_env::new(string name, uvm_component parent);
+function env::new(string name, uvm_component parent);
   super.new(name, parent);
 endfunction : new
 
 
-function void tb_env::build_phase(uvm_phase phase);
+function void env::build_phase(uvm_phase phase);
   super.build_phase(phase);
 
   if (!uvm_config_db #(env_config)::get(this, "", "env_config", env_cfg)) begin
@@ -50,7 +50,7 @@ function void tb_env::build_phase(uvm_phase phase);
 endfunction : build_phase
 
 
-function void tb_env::connect_phase(uvm_phase phase);
+function void env::connect_phase(uvm_phase phase);
   super.connect_phase(phase);
 
   for (int i = 0; i < 2; i++) begin

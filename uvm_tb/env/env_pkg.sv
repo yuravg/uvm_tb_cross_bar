@@ -21,7 +21,7 @@ package env_pkg;
   `include "env_scoreboard.svh"
 
   `include "env_config.svh"
-  `include "tb_env.svh"
+  `include "env.svh"
 
 endpackage : env_pkg
 

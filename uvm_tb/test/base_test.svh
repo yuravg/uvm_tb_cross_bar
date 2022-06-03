@@ -12,7 +12,7 @@ class base_test extends uvm_test;
   bus_config magt_cfg[2];
   bus_config sagt_cfg[2];
   env_config env_cfg;
-  tb_env     env;
+  env        e;
 
   env_scoreboard_config scrb_cfg;
 
@@ -41,7 +41,7 @@ function void base_test::build_phase(uvm_phase phase);
   end
 
   env_cfg = env_config::type_id::create("env_cfg", this);
-  env     = tb_env::type_id::create("env", this);
+  e       = env::type_id::create("e", this);
 
   for (int i = 0; i < 2; i++) begin
     if (!uvm_config_db #(bus_vif)::get(this, "", $sformatf("mbus%0d_vif", i), magt_cfg[i].vif)) begin
@@ -78,14 +78,14 @@ task base_test::run_phase(uvm_phase phase);
   super.run_phase(phase);
 
   for (int i = 0; i < 2; i++) begin
-    write.mseqr[i] = env.magt[i].seqr;
-    write.sseqr[i] = env.sagt[i].seqr;
-    read.mseqr[i]  = env.magt[i].seqr;
-    read.sseqr[i]  = env.sagt[i].seqr;
-    tr.mseqr[i]    = env.magt[i].seqr;
-    tr.sseqr[i]    = env.sagt[i].seqr;
-    mtr.mseqr[i]   = env.magt[i].seqr;
-    mtr.sseqr[i]   = env.sagt[i].seqr;
+    write.mseqr[i] = e.magt[i].seqr;
+    write.sseqr[i] = e.sagt[i].seqr;
+    read.mseqr[i]  = e.magt[i].seqr;
+    read.sseqr[i]  = e.sagt[i].seqr;
+    tr.mseqr[i]    = e.magt[i].seqr;
+    tr.sseqr[i]    = e.sagt[i].seqr;
+    mtr.mseqr[i]   = e.magt[i].seqr;
+    mtr.sseqr[i]   = e.sagt[i].seqr;
   end
 
   phase.raise_objection(this);
