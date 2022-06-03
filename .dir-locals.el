@@ -19,4 +19,9 @@
   ((verilog-mode . ((yura/verilog-buffer-style . uvm)))
    (verilog-mode . ((eval add-hook
                           'before-save-hook
-                          #'yura/verilog-overwrite-identifiers nil :local))))))
+                          #'yura/verilog-add-or-overwrite-identifiers nil :local)))))
+ ("agents" .
+  ((verilog-mode . ((yura/verilog-buffer-style . uvm)))
+   (verilog-mode . ((eval add-hook
+                          'before-save-hook
+                          #'yura/verilog-add-or-overwrite-identifiers nil :local))))))
