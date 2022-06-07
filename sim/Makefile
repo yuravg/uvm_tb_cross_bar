@@ -4,7 +4,9 @@ MAKE = make --no-print-directory
 OPTIMIZE  ?= +acc
 TIMESCALE ?= 1ns/1ps
 END_TIME_VSIM ?= 1ms
-VLOG = vlog -incr -sv $(OPTIMIZE) -timescale $(TIMESCALE)
+VLOG_OPTS ?=
+VSIM_OPTS ?=
+VLOG = vlog -incr -sv $(OPTIMIZE) $(VLOG_OPTS) -timescale $(TIMESCALE)
 ifeq ($(OS), Windows_NT)
   WIN_OS_BG=&
 else
@@ -89,12 +91,14 @@ sim:
 	  fi
 
 sim_cmd:
-	vsim -c $(DUT)_tb_opt +UVM_TESTNAME=$(UVM_TEST) -l $(UVM_TEST).log $(UVM_VERBOSITY) \
+	vsim -c $(DUT)_tb_opt $(VSIM_OPTS)                                \
+		+UVM_TESTNAME=$(UVM_TEST) -l $(UVM_TEST).log $(UVM_VERBOSITY) \
 		-do "run $(END_TIME_VSIM); exit"
 
 sim_gui:
-	vsim $(DUT)_tb_opt +UVM_TESTNAME=$(UVM_TEST) -l $(UVM_TEST).log $(UVM_VERBOSITY) \
-		-do "source ./wave_$(DUT)_tb.do; run $(END_TIME_VSIM); exit"                 \
+	vsim $(DUT)_tb_opt $(VSIM_OPTS)                                   \
+		+UVM_TESTNAME=$(UVM_TEST) -l $(UVM_TEST).log $(UVM_VERBOSITY) \
+		-do "source ./wave_$(DUT)_tb.do; run $(END_TIME_VSIM); exit"  \
 		$(WIN_OS_BG)
 
 write_rpt:
