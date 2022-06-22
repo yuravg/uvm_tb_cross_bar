@@ -34,7 +34,7 @@ function void bus_agent::build_phase(uvm_phase phase);
   end
 
   ap   = new("ap", this);
-  seqr = bus_sequencer::type_id::create("seqr", this);
+  seqr = new("seqr", this);
   drv  = bus_driver::type_id::create("drv", this);
   mon  = bus_monitor::type_id::create("mon", this);
 endfunction : build_phase

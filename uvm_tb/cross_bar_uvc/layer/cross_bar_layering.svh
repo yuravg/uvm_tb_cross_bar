@@ -38,7 +38,7 @@ function void cross_bar_layering::build_phase(uvm_phase phase);
 
   ap = new("ap", this);
 
-  cb_seqr    = cross_bar_sequencer::type_id::create("cb_seqr", this);
+  cb_seqr    = new("cb_seqr", this);
   mon        = bus2cross_bar_monitor::type_id::create("mon", this);
   cb2bus_seq = cross_bar2bus_seq::type_id::create("cb2bus_seq", this);
 endfunction : build_phase
