@@ -1,17 +1,12 @@
 
 MAKE = make --no-print-directory
 
-OPTIMIZE  ?= +acc
-TIMESCALE ?= 1ns/1ps
+VLOG_OPTIONS = -incr -sv +acc -timescale 1ns/1ps
+VSIM_OPTIONS =
+VLOG = vlog $(VLOG_OPTIONS)
+VSIM_MODE ?= "-c"
 END_TIME_VSIM ?= 1ms
-VLOG_OPTS ?=
-VSIM_OPTS ?=
-VLOG = vlog -incr -sv $(OPTIMIZE) $(VLOG_OPTS) -timescale $(TIMESCALE)
-ifeq ($(OS), Windows_NT)
-  WIN_OS_BG=&
-else
-  WIN_OS_BG=""
-endif
+WRITE_RPT ?= "yes"
 
 define vlog_pkg
   $(VLOG) +incdir+$(dir $(basename $1)) $1
@@ -23,8 +18,6 @@ ifeq ($(UVM_MSG), HIGH)
 else
   UVM_VERBOSITY=+UVM_VERBOSITY=UVM_LOW
 endif
-VSIM_MODE ?= "-c"
-WRITE_RPT ?= "yes"
 
 DUT = cross_bar
 UVM_TEST ?= test_write
@@ -41,7 +34,7 @@ help:
 	@echo "  compile_rtl - compile all rtl"
 	@echo "  compile_tb  - compile all testbench"
 	@echo "  compile     - compile all rtl and testbench"
-	@echo "  clean       - clean"
+	@echo "  clean       - remove derived files"
 	@echo ""
 	@echo "  all_tests   - run all uvm tests"
 	@echo ""
@@ -91,15 +84,14 @@ sim:
 	  fi
 
 sim_cmd:
-	vsim -c $(DUT)_tb_opt $(VSIM_OPTS)                                \
+	vsim -c $(VSIM_OPTIONS) $(DUT)_tb_opt                             \
 		+UVM_TESTNAME=$(UVM_TEST) -l $(UVM_TEST).log $(UVM_VERBOSITY) \
 		-do "run $(END_TIME_VSIM); exit"
 
 sim_gui:
-	vsim $(DUT)_tb_opt $(VSIM_OPTS)                                   \
+	vsim $(VSIM_OPTIONS) $(DUT)_tb_opt                                \
 		+UVM_TESTNAME=$(UVM_TEST) -l $(UVM_TEST).log $(UVM_VERBOSITY) \
-		-do "source ./wave_$(DUT)_tb.do; run $(END_TIME_VSIM); exit"  \
-		$(WIN_OS_BG)
+		-do "source ./wave_$(DUT)_tb.do; run $(END_TIME_VSIM)" &
 
 write_rpt:
 	@-if [ "$(WRITE_RPT)" = "yes" ]; then            \
@@ -149,9 +141,9 @@ all_tests:
 	$(MAKE) summary
 
 CNT_TESTS=`echo $(TESTS) | wc -w`
-CNT_LOG=`ls *.log 2>/dev/null | wc -l `
-CNT_TEST_DONE=`grep -e '\[TEST_DONE\]     1' *.log 2>/dev/null | wc -l `
-CNT_TEST_PASSED=`grep -e 'TEST PASSED' *.log 2>/dev/null | wc -l `
+CNT_LOG=`ls test_*.log 2>/dev/null | wc -l `
+CNT_TEST_DONE=`grep -e '\[TEST_DONE\]     1' test_*.log 2>/dev/null | wc -l `
+CNT_TEST_PASSED=`grep -e 'TEST PASSED' test_*.log 2>/dev/null | wc -l `
 
 summary:
 	@echo "+-------------------------------------------------------+";                \
