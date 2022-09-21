@@ -13,7 +13,6 @@ package cross_bar_vseqs_pkg;
   import uvm_pkg::*;
 
   import bus_agent_pkg::*;
-  import bus_seqs_pkg::*;
   import cross_bar_agent_pkg::*;
 
   typedef uvm_sequence #(uvm_sequence_item) uvm_virtual_sequence;

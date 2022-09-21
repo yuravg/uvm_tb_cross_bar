@@ -15,19 +15,36 @@ Used my implementation of this design.
 
 For RTL synthesis is used Intel Quartus Prime, example is located in the =quartus= directory.
 
+#+begin_src text
+|-rtl/
+#+end_src
+
 * Testbench
 The testbench has /bus/ and /cross-bar/ UVC.
 
-/Bus/ UVC has /agent/ and /sequences/ packages.
+/Bus/ UVC has /agent/ and /sequences/.
 
-/Cross-bar/ UVC has /agent/, /layer/ and /virtual_sequences/ packages.
+/Cross-bar/ UVC has /agent/, connecting /layer/ and /sequences/.
 The /layer/ provides connectivity /cross-bar/ and /bus/ UVC.
 
-/Env/ connected DUT, UVC and /scoreboard/.
+/Env/ has /scoreboard/ and connect /cross-bar/ agents.
 The /scoreboard/ is checking results of each /tests/.
 
-SystemVerilog UVM tesbench is located in the =uvm_tb= directory.
+/TB/ provides connection /RLT/ to UVM /Test/.
 
+Each /Test/ connects /Env/ to /DUT/ and runs required /virtual_sequences/.
+The result of all sequences is checked using /scoreboard/.
+
+#+begin_src text
+|-agents/
+| |_bus_uvc/
+| |_cross_bar_uvc/
+-uvm_tb/
+  |_env/
+  |_tb/
+  |_tests/
+  |_virtual_sequences/
+#+end_src
 * Simulation
 To run simulation of this example used Mentor Graphic's QuestaSim or ModelSim simulator.
 
@@ -35,7 +52,11 @@ Directory =sim= contains files to run simulation.
 
 Following examples of commands to be run from the =sim= directory.
 
-** Common
+#+begin_src text
+|-sim/
+#+end_src
+
+** Simulation launch
 To run the simulation used console and make-file.
 
 To get list of available commands or =list of tests= should run following command from console:

@@ -4,21 +4,23 @@
 // License : MIT License
 //-----------------------------------------------------------------------------
 
-`ifndef CROSS_BAR_LAYERING_PKG_SV
-  `define CROSS_BAR_LAYERING_PKG_SV
+`ifndef CROSS_BAR_AGENT_PKG_SV
+  `define CROSS_BAR_AGENT_PKG_SV
 
-package cross_bar_layering_pkg;
+package cross_bar_agent_pkg;
 
-  import uvm_pkg::*;
   `include "uvm_macros.svh"
-
+  import uvm_pkg::*;
   import bus_agent_pkg::*;
-  import cross_bar_agent_pkg::*;
+
+  `include "cross_bar_seq_item.svh"
+
+  typedef uvm_sequencer #(cross_bar_seq_item) cross_bar_sequencer;
 
   `include "cross_bar2bus_seq.svh"
   `include "bus2cross_bar_monitor.svh"
   `include "cross_bar_layering.svh"
 
-endpackage : cross_bar_layering_pkg
+endpackage : cross_bar_agent_pkg
 
-`endif // CROSS_BAR_LAYERING_PKG_SV
+`endif // CROSS_BAR_AGENT_PKG_SV

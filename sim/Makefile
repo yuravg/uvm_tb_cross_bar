@@ -22,8 +22,8 @@ endif
 DUT = cross_bar
 UVM_TEST ?= test_write
 RTL = ../rtl
-TB = ../uvm_tb
-TESTS = $(notdir $(basename $(wildcard $(TB)/test/test*.svh)))
+TB = ..
+TESTS = $(notdir $(basename $(wildcard $(TB)/uvm_tb/tests/test*.svh)))
 
 .PHONY: help target
 help:
@@ -58,14 +58,12 @@ compile_rtl:
 
 compile_tb:
 	$(MAKE) wlib
-	$(call vlog_pkg,$(TB)/bus_uvc/agent/bus_agent_pkg.sv)
-	$(call vlog_pkg,$(TB)/bus_uvc/sequences/bus_seqs_pkg.sv)
-	$(call vlog_pkg,$(TB)/cross_bar_uvc/agent/cross_bar_agent_pkg.sv)
-	$(call vlog_pkg,$(TB)/cross_bar_uvc/layer/cross_bar_layering_pkg.sv)
-	$(call vlog_pkg,$(TB)/cross_bar_uvc/virtual_sequences/cross_bar_vseqs_pkg.sv)
-	$(call vlog_pkg,$(TB)/env/env_pkg.sv)
-	$(call vlog_pkg,$(TB)/test/test_pkg.sv)
-	$(VLOG) $(TB)/cross_bar_tb.sv
+	$(call vlog_pkg,$(TB)/agents/bus_uvc/bus_agent_pkg.sv)
+	$(call vlog_pkg,$(TB)/agents/cross_bar_uvc/cross_bar_agent_pkg.sv)
+	$(call vlog_pkg,$(TB)/uvm_tb/virtual_sequences/cross_bar_vseqs_pkg.sv)
+	$(call vlog_pkg,$(TB)/uvm_tb/env/env_pkg.sv)
+	$(call vlog_pkg,$(TB)/uvm_tb/tests/test_pkg.sv)
+	$(VLOG) $(TB)/uvm_tb/tb/cross_bar_tb.sv
 
 compile:
 	$(MAKE) compile_rtl
