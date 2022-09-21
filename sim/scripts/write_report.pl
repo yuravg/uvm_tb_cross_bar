@@ -64,11 +64,14 @@ sub log_parser {
     if (/reporter \[RNTST\] Running test/) {
         s/.*(0:) reporter/$1/;
     } else {
-        s/^#//;
-        if (/\s+\S+\s+\S+\s+\S+\s+(?<time>\S+)\s+(?<item>\S+)\s+(?<tag>\S+)\s+(?<msg>.+)/) {
-            my($time, $item, $tag, $msg) = ($+{time}, $+{item}, $+{tag}, $+{msg});
-            $item =~ s/uvm_test_top.//;
-            $_ = "$time $tag $item: $msg\n";
+        s/^#\s{0,3}//;
+        if (/^UVM_/) {
+            if (/.*@\s+(?<time>[0-9]+):\s+(?<item>\S+)\s+(?<tag>(\[[^\]]+\]))\s+(?<msg>.+)/) {
+                my($time, $item, $tag, $msg) = ($+{time}, $+{item}, $+{tag}, $+{msg});
+                if (defined $time) {
+                    $_ = "$time $tag $item: $msg\n";
+                }
+            }
         }
     }
 }
