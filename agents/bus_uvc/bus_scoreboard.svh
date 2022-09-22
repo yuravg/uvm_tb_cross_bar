@@ -13,7 +13,6 @@ class bus_scoreboard extends uvm_scoreboard;
 
   extern function new(string name, uvm_component parent);
   extern function void build_phase(uvm_phase phase);
-  extern function void connect_phase(uvm_phase phase);
   extern task run_phase(uvm_phase phase);
   extern virtual function void info(bus_seq_item item);
 
@@ -26,14 +25,8 @@ endfunction : new
 
 
 function void bus_scoreboard::build_phase(uvm_phase phase);
-  super.build_phase(phase);
   ap = new("ap", this);
 endfunction : build_phase
-
-
-function void bus_scoreboard::connect_phase(uvm_phase phase);
-  super.connect_phase(phase);
-endfunction : connect_phase
 
 
 task bus_scoreboard::run_phase(uvm_phase phase);

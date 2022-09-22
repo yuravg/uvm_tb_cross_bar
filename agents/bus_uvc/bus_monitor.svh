@@ -30,7 +30,6 @@ endfunction : new
 
 
 function void bus_monitor::build_phase(uvm_phase phase);
-  super.build_phase(phase);
   ap = new("ap", this);
 endfunction : build_phase
 

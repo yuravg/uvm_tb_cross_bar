@@ -33,8 +33,6 @@ endfunction : new
 
 
 function void base_test::build_phase(uvm_phase phase);
-  super.build_phase(phase);
-
   for (int i = 0; i < 2; i++) begin
     magt_cfg[i] = bus_config::type_id::create($sformatf("magt_cfg[%0d]", i), this);
     sagt_cfg[i] = bus_config::type_id::create($sformatf("sagt_cfg[%0d]", i), this);
@@ -75,8 +73,6 @@ endfunction : build_phase
 
 
 task base_test::run_phase(uvm_phase phase);
-  super.run_phase(phase);
-
   for (int i = 0; i < 2; i++) begin
     write.mseqr[i] = e.magt[i].seqr;
     write.sseqr[i] = e.sagt[i].seqr;

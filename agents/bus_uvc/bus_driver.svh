@@ -11,7 +11,6 @@ class bus_driver extends uvm_driver #(bus_seq_item);
   driver_mode_e driver_mode = NORMAL;
 
   extern function new(string name, uvm_component parent);
-  extern function void build_phase(uvm_phase phase);
   extern task run_phase(uvm_phase phase);
   extern task init();
   extern task init_bus_vif();
@@ -26,11 +25,6 @@ endclass : bus_driver
 function bus_driver::new(string name, uvm_component parent);
   super.new(name, parent);
 endfunction : new
-
-
-function void bus_driver::build_phase(uvm_phase phase);
-  super.build_phase(phase);
-endfunction : build_phase
 
 
 task bus_driver::run_phase(uvm_phase phase);

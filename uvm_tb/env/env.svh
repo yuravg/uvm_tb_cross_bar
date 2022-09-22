@@ -27,8 +27,6 @@ endfunction : new
 
 
 function void env::build_phase(uvm_phase phase);
-  super.build_phase(phase);
-
   if (!uvm_config_db #(env_config)::get(this, "", "env_config", env_cfg)) begin
     `uvm_fatal("build_phase", "Unable to get env_config (type: env_config) from uvm_config_db")
   end
@@ -51,8 +49,6 @@ endfunction : build_phase
 
 
 function void env::connect_phase(uvm_phase phase);
-  super.connect_phase(phase);
-
   for (int i = 0; i < 2; i++) begin
     master_lrg[i].connect2agent(magt[i]);
     slave_lrg[i].connect2agent(sagt[i]);

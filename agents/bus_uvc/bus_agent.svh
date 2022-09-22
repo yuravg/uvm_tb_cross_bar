@@ -27,8 +27,6 @@ endfunction : new
 
 
 function void bus_agent::build_phase(uvm_phase phase);
-  super.build_phase(phase);
-
   if (!uvm_config_db #(bus_config)::get(this, "", "config", cfg)) begin
     `uvm_fatal("build_phase", "Unable to get config (type: bus_config) from uvm_config_db")
   end
@@ -41,8 +39,6 @@ endfunction : build_phase
 
 
 function void bus_agent::connect_phase(uvm_phase phase);
-  super.connect_phase(phase);
-
   drv.driver_mode = cfg.driver_mode;
   drv.vif = cfg.vif;
   drv.seq_item_port.connect(seqr.seq_item_export);

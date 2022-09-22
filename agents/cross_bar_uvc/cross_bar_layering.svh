@@ -34,8 +34,6 @@ endfunction : new
 
 
 function void cross_bar_layering::build_phase(uvm_phase phase);
-  super.build_phase(phase);
-
   ap = new("ap", this);
 
   cb_seqr    = new("cb_seqr", this);
@@ -45,8 +43,6 @@ endfunction : build_phase
 
 
 function void cross_bar_layering::connect_phase(uvm_phase phase);
-	super.connect_phase(phase);
-
 	mon.ap.connect(ap);
 endfunction : connect_phase
 

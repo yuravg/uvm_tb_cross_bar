@@ -42,8 +42,6 @@ endfunction : new
 
 
 function void env_scoreboard::build_phase(uvm_phase phase);
-  super.build_phase(phase);
-
   if (!uvm_config_db #(env_scoreboard_config)::get(this, "", "config", cfg)) begin
 	  `uvm_fatal("build_phase", "Unable to get config (type: env_scoreboard_config) from uvm_config_db")
   end
@@ -142,7 +140,6 @@ endtask : compare_result
 function void env_scoreboard::report_phase(uvm_phase phase);
   string summary;
   bit    test_is_ok;
-  super.report_phase(phase);
   test_is_ok = (!cnt_errors) && (cnt_equal > 0) &&
                (cnt_equal == cnt_master_tr) && (cnt_master_tr == cnt_slave_tr);
   summary = $sformatf("Success/Error: %0d/%0d; Send/Get: %0d/%0d",
