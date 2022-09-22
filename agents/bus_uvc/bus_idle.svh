@@ -19,6 +19,6 @@ endfunction : new
 
 
 task bus_idle::body();
-  item.operation = bus_seq_item::IDLE;
+  req.operation = bus_seq_item::IDLE;
   super.body();
 endtask : body

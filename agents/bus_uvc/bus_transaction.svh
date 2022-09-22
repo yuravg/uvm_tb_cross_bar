@@ -9,7 +9,7 @@ class bus_transaction extends bus_base_seq;
 
   extern function new(string name = "");
 
-  bus_seq_item item;
+  bus_seq_item req;
 
   extern task body();
 
@@ -19,14 +19,14 @@ endclass : bus_transaction
 function bus_transaction::new(string name = "");
   super.new(name);
 
-  item = bus_seq_item::type_id::create("item");
+  req = bus_seq_item::type_id::create("req");
 endfunction : new
 
 
 task bus_transaction::body();
-  operation = this.item.operation;
-  addr = this.item.addr;
-  wdata = this.item.wdata;
+  operation = this.req.operation;
+  addr = this.req.addr;
+  wdata = this.req.wdata;
   super.body();
-  this.item.rdata = rdata;
+  this.req.rdata = rdata;
 endtask : body

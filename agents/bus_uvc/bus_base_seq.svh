@@ -14,7 +14,7 @@ class bus_base_seq extends uvm_sequence #(bus_seq_item);
   rand bit [31:0]  rdata;
 
   rand bus_seq_item::operation_e operation;
-  bus_seq_item item;
+  bus_seq_item req;
 
   extern virtual task body();
 
@@ -24,15 +24,15 @@ endclass : bus_base_seq
 function bus_base_seq::new(string name = "");
   super.new(name);
 
-  item = bus_seq_item::type_id::create("item");
+  req = bus_seq_item::type_id::create("req");
 endfunction : new
 
 
 task bus_base_seq::body();
-  item.operation = operation;
-  item.addr      = addr;
-  item.wdata     = wdata;
-  start_item(item);
-  rdata = item.rdata;
-  finish_item(item);
+  req.operation = operation;
+  req.addr      = addr;
+  req.wdata     = wdata;
+  start_item(req);
+  rdata = req.rdata;
+  finish_item(req);
 endtask : body

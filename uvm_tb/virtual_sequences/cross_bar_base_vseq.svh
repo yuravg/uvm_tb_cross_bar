@@ -9,7 +9,7 @@ class cross_bar_base_vseq extends uvm_virtual_sequence;
 
   extern function new(string name = "");
 
-  item_t item;
+  req_t req;
 
   bus_sequencer mseqr[2];
   bus_sequencer sseqr[2];
@@ -25,9 +25,9 @@ class cross_bar_base_vseq extends uvm_virtual_sequence;
   extern task pre_body();
   extern virtual task body();
 
-  extern task transaction(input item_t item);
-  extern task write(input item_t item);
-  extern task read(input item_t item);
+  extern task transaction(input req_t req);
+  extern task write(input req_t req);
+  extern task read(input req_t req);
 
   extern protected task forever_ack();
 
@@ -45,7 +45,7 @@ endfunction : new
 
 
 task cross_bar_base_vseq::pre_body();
-  item = item_t::type_id::create($sformatf("item"));
+  req = req_t::type_id::create($sformatf("req"));
 
   for (int i = 0; i < 2; i++) begin : declaration
     bus_tr[i] = bus_transaction::type_id::create($sformatf("bus_tr[%0d]", i));
@@ -63,24 +63,24 @@ task cross_bar_base_vseq::body();
 endtask : body
 
 
-task cross_bar_base_vseq::transaction(input item_t item);
-  int i = item.master;
-  bus_tr[i].item.do_copy(item);
+task cross_bar_base_vseq::transaction(input req_t req);
+  int i = req.master;
+  bus_tr[i].req.do_copy(req);
   `uvm_info("debug", $sformatf("bus_tr[%0d]: %0s",
-                               i, bus_tr[i].item.convert2string()), UVM_HIGH)
+                               i, bus_tr[i].req.convert2string()), UVM_HIGH)
   bus_tr[i].start(mseqr[i]);
 endtask : transaction
 
 
-task cross_bar_base_vseq::write(input item_t item);
-  item.operation = item_t::WRITE;
-  transaction(item);
+task cross_bar_base_vseq::write(input req_t req);
+  req.operation = req_t::WRITE;
+  transaction(req);
 endtask : write
 
 
-task cross_bar_base_vseq::read(input item_t item);
-  item.operation = item_t::READ;
-  transaction(item);
+task cross_bar_base_vseq::read(input req_t req);
+  req.operation = req_t::READ;
+  transaction(req);
 endtask : read
 
 

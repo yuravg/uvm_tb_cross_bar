@@ -22,22 +22,22 @@ endfunction : new
 
 
 task cross_bar2bus_seq::body();
-  cross_bar_seq_item cb_item;
-  bus_seq_item       bus_item;
+  cross_bar_seq_item cb_req;
+  bus_seq_item       bus_req;
 
   forever begin
-    seqr.get_next_item(cb_item);
+    seqr.get_next_item(cb_req);
 
-    bus_item = bus_seq_item::type_id::create("bus_item",, get_full_name());
-    start_item(bus_item);
+    bus_req = bus_seq_item::type_id::create("bus_req",, get_full_name());
+    start_item(bus_req);
 
-    // bus_item.addr      = cb_item.addr;
-    // bus_item.wdata     = cb_item.wdata;
-    // bus_item.operation = cb_item.operation;
+    // bus_req.addr      = cb_req.addr;
+    // bus_req.wdata     = cb_req.wdata;
+    // bus_req.operation = cb_req.operation;
 
-    // cb_item.rdata      = bus_item.rdata;
+    // cb_req.rdata      = bus_req.rdata;
 
-    finish_item(bus_item);
+    finish_item(bus_req);
     seqr.item_done();
   end
 endtask : body

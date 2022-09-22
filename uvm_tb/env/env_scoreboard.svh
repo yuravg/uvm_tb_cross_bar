@@ -31,7 +31,7 @@ class env_scoreboard extends uvm_scoreboard;
   extern task run_phase(uvm_phase phase);
   extern task compare_result();
   extern function void report_phase(uvm_phase phase);
-  extern protected function bit check_arbitrage(cross_bar_seq_item item, input bit master);
+  extern protected function bit check_arbitrage(cross_bar_seq_item req, input bit master);
 
 endclass : env_scoreboard
 
@@ -69,35 +69,35 @@ endfunction : connect_phase
 
 
 task env_scoreboard::run_phase(uvm_phase phase);
-  cross_bar_seq_item master_item = cross_bar_seq_item::type_id::create("master_item", this);
-  cross_bar_seq_item slave_item  = cross_bar_seq_item::type_id::create("slave_item", this);
+  cross_bar_seq_item master_req = cross_bar_seq_item::type_id::create("master_req", this);
+  cross_bar_seq_item slave_req  = cross_bar_seq_item::type_id::create("slave_req", this);
 
   fork
     forever begin
-      ap_master_fifo[0].get(master_item);
-      master_fifo.write(master_item);
-      `uvm_info("cross_bar", {"Master: ", master_item.convert2string()}, UVM_MEDIUM)
+      ap_master_fifo[0].get(master_req);
+      master_fifo.write(master_req);
+      `uvm_info("cross_bar", {"Master: ", master_req.convert2string()}, UVM_MEDIUM)
       cnt_master_tr++;
     end
 
     forever begin
-      ap_master_fifo[1].get(master_item);
-      master_fifo.write(master_item);
-      `uvm_info("cross_bar", {"Master: ", master_item.convert2string()}, UVM_MEDIUM)
+      ap_master_fifo[1].get(master_req);
+      master_fifo.write(master_req);
+      `uvm_info("cross_bar", {"Master: ", master_req.convert2string()}, UVM_MEDIUM)
       cnt_master_tr++;
     end
 
     forever begin
-      ap_slave_fifo[0].get(slave_item);
-      slave_fifo.write(slave_item);
-      `uvm_info("cross_bar", {"Slave: ", slave_item.convert2string()}, UVM_MEDIUM)
+      ap_slave_fifo[0].get(slave_req);
+      slave_fifo.write(slave_req);
+      `uvm_info("cross_bar", {"Slave: ", slave_req.convert2string()}, UVM_MEDIUM)
       cnt_slave_tr++;
     end
 
     forever begin
-      ap_slave_fifo[1].get(slave_item);
-      slave_fifo.write(slave_item);
-      `uvm_info("cross_bar", {"Slave: ", slave_item.convert2string()}, UVM_MEDIUM)
+      ap_slave_fifo[1].get(slave_req);
+      slave_fifo.write(slave_req);
+      `uvm_info("cross_bar", {"Slave: ", slave_req.convert2string()}, UVM_MEDIUM)
       cnt_slave_tr++;
     end
 
@@ -109,27 +109,27 @@ endtask : run_phase
 
 
 task env_scoreboard::compare_result();
-  cross_bar_seq_item mfifo_item = cross_bar_seq_item::type_id::create("mfifo_item", this);
-  cross_bar_seq_item sfifo_item = cross_bar_seq_item::type_id::create("sfifo_item", this);
+  cross_bar_seq_item mfifo_req = cross_bar_seq_item::type_id::create("mfifo_req", this);
+  cross_bar_seq_item sfifo_req = cross_bar_seq_item::type_id::create("sfifo_req", this);
 
-  master_fifo.get(mfifo_item);
-  slave_fifo.get(sfifo_item);
+  master_fifo.get(mfifo_req);
+  slave_fifo.get(sfifo_req);
 
-  if (mfifo_item.compare(sfifo_item)) begin
-    `uvm_info("cross_bar", {"Transaction was completed successfully! ", mfifo_item.convert2string()}, UVM_LOW)
+  if (mfifo_req.compare(sfifo_req)) begin
+    `uvm_info("cross_bar", {"Transaction was completed successfully! ", mfifo_req.convert2string()}, UVM_LOW)
     cnt_equal++;
   end else begin
     `uvm_info("cross_bar", "Verification ERROR!", UVM_LOW)
-    `uvm_info("cross_bar", $sformatf("get from master(error): %0s", mfifo_item.convert2string()), UVM_LOW)
-    `uvm_info("cross_bar", $sformatf("get from slave (error): %0s", sfifo_item.convert2string()), UVM_LOW)
+    `uvm_info("cross_bar", $sformatf("get from master(error): %0s", mfifo_req.convert2string()), UVM_LOW)
+    `uvm_info("cross_bar", $sformatf("get from slave (error): %0s", sfifo_req.convert2string()), UVM_LOW)
     cnt_errors++;
   end
 
   if (cfg.test_name == ARBITRAGE) begin
-    if (!check_arbitrage(mfifo_item, master)) begin
+    if (!check_arbitrage(mfifo_req, master)) begin
       `uvm_info("cross_bar", "Verification ERROR!", UVM_LOW)
       `uvm_info("cross_bar", $sformatf("Arbitrage mismatch: get %0d, expect: %0d",
-                                       mfifo_item.master, master), UVM_LOW)
+                                       mfifo_req.master, master), UVM_LOW)
       cnt_errors++;
     end
     master += 1;
@@ -151,8 +151,8 @@ function void env_scoreboard::report_phase(uvm_phase phase);
 endfunction : report_phase
 
 
-function bit env_scoreboard::check_arbitrage(cross_bar_seq_item item, input bit master);
-  if (item.master != master)
+function bit env_scoreboard::check_arbitrage(cross_bar_seq_item req, input bit master);
+  if (req.master != master)
     return 0;
   else
     return 1;

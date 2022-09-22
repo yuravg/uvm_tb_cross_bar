@@ -23,9 +23,9 @@ endfunction : new
 
 
 task cross_bar_multi_tr::body();
-  item_t item[2];
+  req_t req[2];
   for (int i = 0; i < 2; i++) begin
-    item[i] = item_t::type_id::create($sformatf("item[%0d]", i));
+    req[i] = req_t::type_id::create($sformatf("req[%0d]", i));
   end
 
   repeat (num_sequences) begin
@@ -40,17 +40,17 @@ task cross_bar_multi_tr::body();
     fork
       // TODO: use 'for' to create threads(how?)
       repeat (length[0]) begin
-        assert(item[0].randomize()
-               with {master == 0; operation==item_t::READ || operation==item_t::WRITE;});
+        assert(req[0].randomize()
+               with {master == 0; operation==req_t::READ || operation==req_t::WRITE;});
 
-        transaction(item[0]);
+        transaction(req[0]);
       end
 
       repeat (length[1]) begin
-        assert(item[1].randomize()
-               with {master == 1; operation==item_t::READ || operation==item_t::WRITE;});
+        assert(req[1].randomize()
+               with {master == 1; operation==req_t::READ || operation==req_t::WRITE;});
 
-        transaction(item[1]);
+        transaction(req[1]);
       end
     join
   end

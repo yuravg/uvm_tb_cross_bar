@@ -17,7 +17,7 @@ package cross_bar_vseqs_pkg;
 
   typedef uvm_sequence #(uvm_sequence_item) uvm_virtual_sequence;
 
-  typedef cross_bar_seq_item item_t;
+  typedef cross_bar_seq_item req_t;
 
   `include "cross_bar_base_vseq.svh"
   `include "cross_bar_transaction.svh"

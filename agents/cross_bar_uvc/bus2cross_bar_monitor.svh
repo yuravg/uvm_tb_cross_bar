@@ -13,7 +13,7 @@ class bus2cross_bar_monitor extends uvm_subscriber #(bus_seq_item);
 
   extern function new(string name, uvm_component parent);
 
-  cross_bar_seq_item cb_item;
+  cross_bar_seq_item cb_req;
 
   int master;
 
@@ -29,13 +29,13 @@ endfunction : new
 
 
 function void bus2cross_bar_monitor::write(bus_seq_item t);
-  cb_item = cross_bar_seq_item::type_id::create("cb_item",, get_full_name());
+  cb_req = cross_bar_seq_item::type_id::create("cb_req",, get_full_name());
 
-  cb_item.master    = master;
-  cb_item.addr      = t.addr;
-  cb_item.wdata     = t.wdata;
-  cb_item.rdata     = t.rdata;
-  cb_item.operation = t.operation;
+  cb_req.master    = master;
+  cb_req.addr      = t.addr;
+  cb_req.wdata     = t.wdata;
+  cb_req.rdata     = t.rdata;
+  cb_req.operation = t.operation;
 
-  ap.write(cb_item);
+  ap.write(cb_req);
 endfunction : write

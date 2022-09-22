@@ -14,7 +14,7 @@ class bus_scoreboard extends uvm_scoreboard;
   extern function new(string name, uvm_component parent);
   extern function void build_phase(uvm_phase phase);
   extern task run_phase(uvm_phase phase);
-  extern virtual function void info(bus_seq_item item);
+  extern virtual function void info(bus_seq_item req);
 
 endclass : bus_scoreboard
 
@@ -30,15 +30,15 @@ endfunction : build_phase
 
 
 task bus_scoreboard::run_phase(uvm_phase phase);
-  bus_seq_item item;
-  item = bus_seq_item::type_id::create("item");
+  bus_seq_item req;
+  req = bus_seq_item::type_id::create("req");
   forever begin
-    ap.get(item);
-    `uvm_info("bus", item.convert2string(), UVM_LOW)
+    ap.get(req);
+    `uvm_info("bus", req.convert2string(), UVM_LOW)
   end
 endtask : run_phase
 
 
-function void bus_scoreboard::info(bus_seq_item item);
-  `uvm_info("bus", item.convert2string(), UVM_LOW)
+function void bus_scoreboard::info(bus_seq_item req);
+  `uvm_info("bus", req.convert2string(), UVM_LOW)
 endfunction : info

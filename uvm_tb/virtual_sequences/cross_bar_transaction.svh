@@ -20,7 +20,7 @@ endfunction : new
 
 task cross_bar_transaction::body();
   repeat (num_sequences) begin
-    assert(item.randomize() with {operation==item_t::READ || operation==item_t::WRITE;});
-    transaction(item);
+    assert(req.randomize() with {operation==req_t::READ || operation==req_t::WRITE;});
+    transaction(req);
   end
 endtask : body

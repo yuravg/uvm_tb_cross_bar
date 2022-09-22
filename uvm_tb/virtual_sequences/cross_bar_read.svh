@@ -20,7 +20,7 @@ endfunction : new
 
 task cross_bar_read::body();
   repeat (num_sequences) begin
-    assert(item.randomize());
-    read(item);
+    assert(req.randomize());
+    read(req);
   end
 endtask : body

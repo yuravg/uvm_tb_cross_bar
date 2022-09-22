@@ -15,7 +15,7 @@ class bus_monitor extends uvm_monitor;
   extern function new(string name, uvm_component parent);
   extern function void build_phase(uvm_phase phase);
 
-  bus_seq_item item;
+  bus_seq_item req;
 
   extern task run_phase(uvm_phase phase);
   extern task master_bus();
@@ -48,49 +48,49 @@ endtask : run_phase
 
 task bus_monitor::master_bus();
   bit cmd;
-  item = bus_seq_item::type_id::create("item", this);
+  req = bus_seq_item::type_id::create("req", this);
 
   while (~vif.ack) begin
     for (int i = 0; i < 2; i++) begin : vif_master
-      item.addr  = vif.addr;
-      item.wdata = vif.wdata;
+      req.addr  = vif.addr;
+      req.wdata = vif.wdata;
       cmd        = vif.cmd;
     end
     @(posedge vif.clk);
   end
-  item.operation = item.cmd2operation(cmd);
+  req.operation = req.cmd2operation(cmd);
 
-  if (item.read_operation()) begin
+  if (req.read_operation()) begin
     while (~vif.resp)
       @(posedge vif.clk);
-    item.rdata = vif.rdata;
+    req.rdata = vif.rdata;
   end
 
-  ap.write(item);
+  ap.write(req);
   @(posedge vif.clk);
 endtask : master_bus
 
 
 task bus_monitor::slave_bus();
   bit cmd;
-  item = bus_seq_item::type_id::create("item", this);
+  req = bus_seq_item::type_id::create("req", this);
 
   while (~vif.ack) begin
     for (int i = 0; i < 2; i++) begin : vif_save
-      item.addr  = vif.addr;
-      item.wdata = vif.wdata;
+      req.addr  = vif.addr;
+      req.wdata = vif.wdata;
       cmd        = vif.cmd;
     end
     @(negedge vif.clk);
   end
-  item.operation = item.cmd2operation(cmd);
+  req.operation = req.cmd2operation(cmd);
 
-  if (item.read_operation()) begin
+  if (req.read_operation()) begin
     while (~vif.resp)
       @(negedge vif.clk);
-    item.rdata = vif.rdata;
+    req.rdata = vif.rdata;
   end
 
-  ap.write(item);
+  ap.write(req);
   @(negedge vif.clk);
 endtask : slave_bus

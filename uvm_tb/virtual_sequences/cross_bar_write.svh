@@ -20,7 +20,7 @@ endfunction : new
 
 task cross_bar_write::body();
   repeat (num_sequences) begin
-    assert(item.randomize());
-    write(item);
+    assert(req.randomize());
+    write(req);
   end
 endtask : body
