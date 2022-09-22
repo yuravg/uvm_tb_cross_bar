@@ -20,7 +20,9 @@ endfunction : new
 
 task cross_bar_transaction::body();
   repeat (num_sequences) begin
-    assert(req.randomize() with {operation==req_t::READ || operation==req_t::WRITE;});
+    if (!req.randomize() with
+        {operation==req_t::READ || operation==req_t::WRITE;})
+      `uvm_fatal(get_type_name(), "randomize() failed")
     transaction(req);
   end
 endtask : body

@@ -20,7 +20,8 @@ endfunction : new
 
 task cross_bar_read::body();
   repeat (num_sequences) begin
-    assert(req.randomize());
+    if (!req.randomize())
+      `uvm_fatal(get_type_name(), "randomize() failed")
     read(req);
   end
 endtask : body

@@ -40,16 +40,16 @@ task cross_bar_multi_tr::body();
     fork
       // TODO: use 'for' to create threads(how?)
       repeat (length[0]) begin
-        assert(req[0].randomize()
-               with {master == 0; operation==req_t::READ || operation==req_t::WRITE;});
-
+        if (!req[0].randomize() with
+            {master == 0; operation==req_t::READ || operation==req_t::WRITE;})
+          `uvm_fatal(get_type_name(), "randomize() failed")
         transaction(req[0]);
       end
 
       repeat (length[1]) begin
-        assert(req[1].randomize()
-               with {master == 1; operation==req_t::READ || operation==req_t::WRITE;});
-
+        if (!req[1].randomize() with
+            {master == 1; operation==req_t::READ || operation==req_t::WRITE;})
+          `uvm_fatal(get_type_name(), "randomize() failed")
         transaction(req[1]);
       end
     join
