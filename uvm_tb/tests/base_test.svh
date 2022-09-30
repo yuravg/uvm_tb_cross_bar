@@ -9,6 +9,7 @@ class base_test extends uvm_test;
 
   extern function new(string name, uvm_component parent);
 
+  vif_handles vif_h;
   bus_config magt_cfg[2];
   bus_config sagt_cfg[2];
   env_config env_cfg;
@@ -33,21 +34,22 @@ endfunction : new
 
 
 function void base_test::build_phase(uvm_phase phase);
+  vif_h   = vif_handles::type_id::create("vif_h", this);
+  env_cfg = env_config::type_id::create("env_cfg", this);
+  e       = env::type_id::create("e", this);
+
   for (int i = 0; i < 2; i++) begin
     magt_cfg[i] = bus_config::type_id::create($sformatf("magt_cfg[%0d]", i), this);
     sagt_cfg[i] = bus_config::type_id::create($sformatf("sagt_cfg[%0d]", i), this);
   end
 
-  env_cfg = env_config::type_id::create("env_cfg", this);
-  e       = env::type_id::create("e", this);
+  if (!uvm_config_db #(vif_handles)::get(this, "", "vif_handles", vif_h)) begin
+    `uvm_fatal("build_phase", "Cannot get() vif_handles from uvm_config_db")
+  end
 
   for (int i = 0; i < 2; i++) begin
-    if (!uvm_config_db #(bus_vif)::get(this, "", $sformatf("mbus%0d_vif", i), magt_cfg[i].vif)) begin
-      `uvm_fatal("build_phase", "Unable to get mbus[i]_vif (type: bus_vif) from uvm_config_db")
-    end
-    if (!uvm_config_db #(bus_vif)::get(this, "", $sformatf("sbus%0d_vif", i), sagt_cfg[i].vif)) begin
-      `uvm_fatal("build_phase", "Unable to get sbus[i]_vif (type: bus_vif) from uvm_config_db")
-    end
+    magt_cfg[i].vif = vif_h.mbus[i];
+    sagt_cfg[i].vif = vif_h.sbus[i];
 
     sagt_cfg[i].driver_mode = ACK;
 

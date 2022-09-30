@@ -45,11 +45,17 @@ module cross_bar_tb();
     reset <= 0;
   end
 
+  vif_handles vif_h;
+
   initial begin
-    uvm_config_db #(bus_vif)::set(null, "uvm_test_top", "mbus0_vif", mbus[0]);
-    uvm_config_db #(bus_vif)::set(null, "uvm_test_top", "mbus1_vif", mbus[1]);
-    uvm_config_db #(bus_vif)::set(null, "uvm_test_top", "sbus0_vif", sbus[0]);
-    uvm_config_db #(bus_vif)::set(null, "uvm_test_top", "sbus1_vif", sbus[1]);
+    vif_h = vif_handles::type_id::create("vif_h");
+
+    vif_h.mbus[0] = mbus[0];
+    vif_h.mbus[1] = mbus[1];
+    vif_h.sbus[0] = sbus[0];
+    vif_h.sbus[1] = sbus[1];
+
+	  uvm_config_db #(vif_handles)::set(null, "uvm_test_top", "vif_handles", vif_h);
     run_test();
   end
 

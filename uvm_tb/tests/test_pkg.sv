@@ -17,8 +17,9 @@ package test_pkg;
   import cross_bar_agent_pkg::*;
   import env_pkg::*;
 
-  `include "base_test.svh"
+  `include "vif_handles.svh"
 
+  `include "base_test.svh"
   `include "test_transaction.svh"
   `include "test_write.svh"
   `include "test_read.svh"
