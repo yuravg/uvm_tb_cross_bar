@@ -6,7 +6,6 @@
 
 import uvm_pkg::*;
 
-import bus_if_pkg::*;
 import test_pkg::*;
 import bus_agent_pkg::bus_vif;
 
