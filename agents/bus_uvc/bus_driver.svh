@@ -8,7 +8,7 @@ class bus_driver extends uvm_driver #(bus_seq_item);
   `uvm_component_utils(bus_driver)
 
   bus_vif vif;
-  driver_mode_e driver_mode = NORMAL;
+  driver_mode_e driver_mode = SEND;
 
   extern function new(string name, uvm_component parent);
   extern task run_phase(uvm_phase phase);
@@ -57,7 +57,7 @@ endtask : init
 
 
 task bus_driver::init_bus_vif();
-  if (driver_mode) begin
+  if (driver_mode == SEND) begin
     for (int i = 0; i < 2; i++) begin : master_side
       vif.req   = 0;
       vif.addr  = 'hx;
@@ -107,7 +107,7 @@ endtask : write
 
 
 task bus_driver::ack2operatioin(bus_seq_item req);
-  if (driver_mode)
+  if (driver_mode == SEND)
     `uvm_error("ERROR", "Method ack2operatioin() available for driver_mode only!")
 
   while (~vif.req)

@@ -9,7 +9,7 @@ class bus_monitor extends uvm_monitor;
 
   uvm_analysis_port #(bus_seq_item) ap;
 
-  driver_mode_e driver_mode = NORMAL;
+  driver_mode_e driver_mode = SEND;
   bus_vif vif;
 
   extern function new(string name, uvm_component parent);
@@ -39,7 +39,7 @@ task bus_monitor::run_phase(uvm_phase phase);
   while (vif.reset)
     @(posedge vif.clk);
 
-  if (driver_mode)
+  if (driver_mode == SEND)
     forever master_bus();
   else
     forever slave_bus();
