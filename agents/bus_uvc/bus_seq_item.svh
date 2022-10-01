@@ -75,29 +75,31 @@ endfunction : do_record
 
 
 function bit bus_seq_item::do_compare(uvm_object rhs, uvm_comparer comparer);
-  bit          data_is_eqial;
+  bit data_is_equal;
+  bit status;
   bus_seq_item that;
   if (!$cast(that, rhs)) begin
     `uvm_error(get_name(), "rhs is not a bus_seq_item!")
     return 0;
   end
-  data_is_eqial = (this.write_operation()) ?
+  data_is_equal = (this.write_operation()) ?
                   (this.wdata == that.wdata) :
                   (this.rdata == that.rdata);
-  return (super.do_compare(rhs, comparer)  &&
-          this.operation == that.operation &&
-          this.addr      == that.addr      &&
-          data_is_eqial);
+  status = super.do_compare(rhs, comparer);
+  status &= (this.operation == that.operation);
+  status &= (this.addr == that.addr);
+  status &= data_is_equal;
+  return status;
 endfunction : do_compare
 
 
 function void bus_seq_item::do_copy(uvm_object rhs);
   bus_seq_item that;
-  assert(rhs != null) else
-    `uvm_error(get_name(), "Tried to copy null transaction!")
+  if (rhs == null)
+    `uvm_error(get_type_name(), "Tried to copy null transaction!")
   super.do_copy(rhs);
-  assert($cast(that,rhs)) else
-    `uvm_error(get_name(), "rhs is not a bus_seq_item!")
+  if (!$cast(that,rhs))
+    `uvm_error(get_type_name(), "rhs is not a bus_seq_item!")
   addr      = that.addr;
   wdata     = that.wdata;
   rdata     = that.rdata;

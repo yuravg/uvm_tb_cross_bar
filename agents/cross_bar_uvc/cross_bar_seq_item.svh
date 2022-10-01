@@ -52,26 +52,23 @@ endfunction : do_record
 
 function bit cross_bar_seq_item::do_compare(uvm_object rhs, uvm_comparer comparer);
   cross_bar_seq_item that;
-  bit this_slave;
-  bit that_slave;
+  bit status;
   if (!$cast(that, rhs)) begin
     `uvm_error(get_name(), "rhs is not a cross_bar_seq_item!")
     return 0;
   end
-  this_slave = this.get_slave_item();
-  that_slave = that.get_slave_item();
-  return (super.do_compare(rhs, comparer) &&
-          // this.master == that.master &&
-          this_slave  == that_slave);
+  status = super.do_compare(rhs, comparer);
+  status &= (this.get_slave_item() == that.get_slave_item());
+  return status;
 endfunction : do_compare
 
 
 function void cross_bar_seq_item::do_copy(uvm_object rhs);
   cross_bar_seq_item that;
-  assert(rhs != null) else
-    `uvm_error(get_name(), "Tried to copy null transaction!")
+  if (rhs == null)
+    `uvm_error(get_type_name(), "Tried to copy null transaction!")
   super.do_copy(rhs);
-  assert($cast(that,rhs)) else
-    `uvm_error(get_name(), "rhs is not a bus_seq_item!")
+  if (!$cast(that,rhs))
+    `uvm_error(get_type_name(), "rhs is not a bus_seq_item!")
   master = that.master;
 endfunction : do_copy
