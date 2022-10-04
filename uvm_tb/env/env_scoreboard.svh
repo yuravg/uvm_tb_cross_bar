@@ -32,6 +32,7 @@ class env_scoreboard extends uvm_scoreboard;
   extern task compare_result();
   extern function void report_phase(uvm_phase phase);
   extern protected function bit check_arbitrage(cross_bar_seq_item req, input bit master);
+  extern protected function bit test_status();
 
 endclass : env_scoreboard
 
@@ -139,12 +140,9 @@ endtask : compare_result
 
 function void env_scoreboard::report_phase(uvm_phase phase);
   string summary;
-  bit    test_is_ok;
-  test_is_ok = (!cnt_errors) && (cnt_equal > 0) &&
-               (cnt_equal == cnt_master_tr) && (cnt_master_tr == cnt_slave_tr);
   summary = $sformatf("Success/Error: %0d/%0d; Send/Get: %0d/%0d",
                       cnt_equal, cnt_errors, cnt_master_tr, cnt_slave_tr);
-  if (test_is_ok)
+  if (test_status())
     `uvm_info("cross_bar", $sformatf("=== TEST PASSED (%s) ===", summary), UVM_LOW)
   else
     `uvm_info("cross_bar", $sformatf("=== TEST FAILED (%s) ===", summary), UVM_LOW)
@@ -157,3 +155,13 @@ function bit env_scoreboard::check_arbitrage(cross_bar_seq_item req, input bit m
   else
     return 1;
 endfunction : check_arbitrage
+
+
+function bit env_scoreboard::test_status();
+  bit status;
+  status = cnt_errors == 0;
+  status &= cnt_equal > 0;
+  status &= cnt_equal == cnt_master_tr;
+  status &= cnt_master_tr == cnt_slave_tr;
+  return status;
+endfunction : test_status
