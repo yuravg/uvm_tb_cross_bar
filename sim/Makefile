@@ -138,24 +138,5 @@ all_tests:
 	@$(MAKE) sim UVM_TEST=test_arbitrage VSIM_MODE='-c'
 	@$(MAKE) summary
 
-CNT_TESTS=`echo $(TESTS) | wc -w`
-CNT_LOG=`ls test_*.log 2>/dev/null | wc -l `
-CNT_TEST_DONE=`grep -e '\[TEST_DONE\]     1' test_*.log 2>/dev/null | wc -l `
-CNT_TEST_PASSED=`grep -e 'UVM_INFO.*UVM TEST PASSED' test_*.log 2>/dev/null | wc -l `
-
 summary:
-	@echo "+-------------------------------------------------------+";                \
-	 echo "| Summary:                                              |";                \
-	 echo "+-------------------------------------------------------+";                \
-	 echo "| Expect tests / Find logs       = $(CNT_TESTS) / $(CNT_LOG)";             \
-	 echo "| Tests done   / Tests PASSED    = $(CNT_TEST_DONE) / $(CNT_TEST_PASSED)"; \
-	 echo "+-------------------------------------------------------+";
-	@-if [ $(CNT_TESTS) -eq $(CNT_LOG) ] &&         \
-		 [ $(CNT_TESTS) -eq $(CNT_TEST_DONE) ] &&   \
-		 [ $(CNT_TESTS) -eq $(CNT_TEST_PASSED) ] && \
-		 [ $(CNT_TESTS) -gt 0 ] ; then              \
-		echo "| Finished successfully!";            \
-	  else                                          \
-		echo "| ERRORS are detected!";              \
-	  fi
-	@echo "+-------------------------------------------------------+";
+	@cd scripts && ./uvm_summary.pl
