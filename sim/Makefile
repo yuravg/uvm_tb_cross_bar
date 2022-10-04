@@ -141,7 +141,7 @@ all_tests:
 CNT_TESTS=`echo $(TESTS) | wc -w`
 CNT_LOG=`ls test_*.log 2>/dev/null | wc -l `
 CNT_TEST_DONE=`grep -e '\[TEST_DONE\]     1' test_*.log 2>/dev/null | wc -l `
-CNT_TEST_PASSED=`grep -e 'TEST PASSED' test_*.log 2>/dev/null | wc -l `
+CNT_TEST_PASSED=`grep -e 'UVM_INFO.*UVM TEST PASSED' test_*.log 2>/dev/null | wc -l `
 
 summary:
 	@echo "+-------------------------------------------------------+";                \

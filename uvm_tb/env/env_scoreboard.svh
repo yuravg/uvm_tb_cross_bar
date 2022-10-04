@@ -143,9 +143,9 @@ function void env_scoreboard::report_phase(uvm_phase phase);
   summary = $sformatf("Success/Error: %0d/%0d; Send/Get: %0d/%0d",
                       cnt_equal, cnt_errors, cnt_master_tr, cnt_slave_tr);
   if (test_status())
-    `uvm_info("cross_bar", $sformatf("=== TEST PASSED (%s) ===", summary), UVM_LOW)
+    `uvm_info("** UVM TEST PASSED **", summary, UVM_LOW)
   else
-    `uvm_info("cross_bar", $sformatf("=== TEST FAILED (%s) ===", summary), UVM_LOW)
+    `uvm_info("!! UVM TEST FAILED !!", summary, UVM_LOW)
 endfunction : report_phase
 
 
