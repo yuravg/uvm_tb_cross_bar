@@ -50,14 +50,14 @@ wlib:
 	vmap work work
 
 compile_rtl:
-	$(MAKE) wlib
+	@$(MAKE) wlib
 	$(VLOG) $(RTL)/bus_if_pkg.sv  \
 			$(RTL)/bus_if.sv      \
 			$(RTL)/bus2bus_mux.sv \
 			$(RTL)/$(DUT).sv
 
 compile_tb:
-	$(MAKE) wlib
+	@$(MAKE) wlib
 	$(call vlog_pkg,$(TB)/agents/bus_uvc/bus_agent_pkg.sv)
 	$(call vlog_pkg,$(TB)/agents/cross_bar_uvc/cross_bar_agent_pkg.sv)
 	$(call vlog_pkg,$(TB)/uvm_tb/virtual_sequences/cross_bar_vseqs_pkg.sv)
@@ -66,8 +66,8 @@ compile_tb:
 	$(VLOG) $(TB)/uvm_tb/tb/cross_bar_tb.sv
 
 compile:
-	$(MAKE) compile_rtl
-	$(MAKE) compile_tb
+	@$(MAKE) compile_rtl
+	@$(MAKE) compile_tb
 
 opt:
 	vopt $(DUT)_tb -o $(DUT)_tb_opt
@@ -106,37 +106,37 @@ clean_log:
 	rm -rf *.log *.rpt
 
 clean:
-	$(MAKE) clean_log
+	@$(MAKE) clean_log
 	rm -rf *~ work *.wlf* questa.tops transcript *.vstf wlft??????
 
 # start compilation and simulation by test name
 .PHONY: $(TESTS)
 
 $(TESTS):
-	$(MAKE) all UVM_TEST=$@
+	@$(MAKE) all UVM_TEST=$@
 
 .PHONY: all rall
 
 all:
-	$(MAKE) compile
-	$(MAKE) opt
-	$(MAKE) sim
+	@$(MAKE) compile
+	@$(MAKE) opt
+	@$(MAKE) sim
 
 rall:
-	$(MAKE) clean
-	$(MAKE) all
+	@$(MAKE) clean
+	@$(MAKE) all
 
 .PHONY: all_tests summary
 all_tests:
-	$(MAKE) clean_log
-	$(MAKE) compile
-	$(MAKE) opt
-	$(MAKE) sim UVM_TEST=test_write VSIM_MODE='-c'
-	$(MAKE) sim UVM_TEST=test_read VSIM_MODE='-c'
-	$(MAKE) sim UVM_TEST=test_transaction VSIM_MODE='-c'
-	$(MAKE) sim UVM_TEST=test_multi_tr VSIM_MODE='-c'
-	$(MAKE) sim UVM_TEST=test_arbitrage VSIM_MODE='-c'
-	$(MAKE) summary
+	@$(MAKE) clean_log
+	@$(MAKE) compile
+	@$(MAKE) opt
+	@$(MAKE) sim UVM_TEST=test_write VSIM_MODE='-c'
+	@$(MAKE) sim UVM_TEST=test_read VSIM_MODE='-c'
+	@$(MAKE) sim UVM_TEST=test_transaction VSIM_MODE='-c'
+	@$(MAKE) sim UVM_TEST=test_multi_tr VSIM_MODE='-c'
+	@$(MAKE) sim UVM_TEST=test_arbitrage VSIM_MODE='-c'
+	@$(MAKE) summary
 
 CNT_TESTS=`echo $(TESTS) | wc -w`
 CNT_LOG=`ls test_*.log 2>/dev/null | wc -l `
