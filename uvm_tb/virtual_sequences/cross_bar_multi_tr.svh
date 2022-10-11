@@ -24,6 +24,9 @@ endfunction : new
 
 task cross_bar_multi_tr::body();
   req_t req[2];
+
+  super.body();
+
   for (int i = 0; i < 2; i++) begin
     req[i] = req_t::type_id::create($sformatf("req[%0d]", i));
   end

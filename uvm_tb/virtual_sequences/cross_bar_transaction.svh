@@ -19,6 +19,8 @@ endfunction : new
 
 
 task cross_bar_transaction::body();
+  super.body();
+
   repeat (num_sequences) begin
     if (!req.randomize() with
         {operation==req_t::READ || operation==req_t::WRITE;})

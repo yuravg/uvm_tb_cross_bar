@@ -22,7 +22,6 @@ class cross_bar_base_vseq extends uvm_virtual_sequence;
   rand int num_sequences;
   rand int length [2];
 
-  extern task pre_body();
   extern virtual task body();
 
   extern task transaction(input req_t req);
@@ -44,7 +43,7 @@ function cross_bar_base_vseq::new(string name = "");
 endfunction : new
 
 
-task cross_bar_base_vseq::pre_body();
+task cross_bar_base_vseq::body();
   req = req_t::type_id::create($sformatf("req"));
 
   for (int i = 0; i < 2; i++) begin : declaration
@@ -55,11 +54,6 @@ task cross_bar_base_vseq::pre_body();
   fork
     forever_ack();
   join_none
-endtask : pre_body
-
-
-task cross_bar_base_vseq::body();
-  super.body();
 endtask : body
 
 

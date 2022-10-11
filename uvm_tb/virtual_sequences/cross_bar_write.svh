@@ -19,6 +19,8 @@ endfunction : new
 
 
 task cross_bar_write::body();
+  super.body();
+
   repeat (num_sequences) begin
     if (!req.randomize())
       `uvm_fatal(get_type_name(), "randomize() failed")
