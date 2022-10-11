@@ -64,7 +64,7 @@ endfunction : write
 function void cross_bar_layering::connect2agent(bus_agent agt);
   bus_agent that;
   if (!$cast(that, agt)) begin
-    `uvm_error("cross_bar", "Error! Agent type mismatch. Agt is not a bus_agent type!")
+    `uvm_fatal("cross_bar", "Error! Agent type mismatch. Agt is not a bus_agent type!")
   end
   this.agt = agt;
   this.agt.ap.connect(analysis_export);

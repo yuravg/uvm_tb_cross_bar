@@ -38,7 +38,7 @@ task bus_driver::run_phase(uvm_phase phase);
       bus_seq_item::READ  : read(req);
       bus_seq_item::WRITE : write(req);
       bus_seq_item::ACK   : ack2operatioin(req);
-      default : `uvm_error("ERROR", "Can't recognize operation")
+      default : `uvm_fatal("ERROR", "Can't recognize operation")
     endcase
     seq_item_port.item_done();
   end
@@ -47,10 +47,10 @@ endtask : run_phase
 
 task bus_driver::init();
   if ($isunknown(vif.reset)) begin
-    `uvm_error("bus", "Detected: vif.reset == x! You must set this net!")
+    `uvm_fatal("bus", "Detected: vif.reset == x! You must set this net!")
   end
   if ($isunknown(vif.clk)) begin
-    `uvm_error("bus", "Detected: vif.clk == x! You must set this net!")
+    `uvm_fatal("bus", "Detected: vif.clk == x! You must set this net!")
   end
   init_bus_vif();
 endtask : init
@@ -108,7 +108,7 @@ endtask : write
 
 task bus_driver::ack2operatioin(bus_seq_item req);
   if (driver_mode == SEND)
-    `uvm_error("ERROR", "Method ack2operatioin() available for driver_mode only!")
+    `uvm_fatal("ERROR", "Method ack2operatioin() available for driver_mode only!")
 
   while (~vif.req)
     @(posedge vif.clk);

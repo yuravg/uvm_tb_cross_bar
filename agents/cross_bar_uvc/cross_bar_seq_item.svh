@@ -43,10 +43,10 @@ endfunction : convert2string
 function void cross_bar_seq_item::do_copy(uvm_object rhs);
   cross_bar_seq_item that;
   if (rhs == null)
-    `uvm_error(get_type_name(), "Tried to copy null transaction!")
+    `uvm_fatal(get_type_name(), "Tried to copy null transaction!")
   super.do_copy(rhs);
   if (!$cast(that,rhs))
-    `uvm_error(get_type_name(), "rhs is not a bus_seq_item!")
+    `uvm_fatal(get_type_name(), "rhs is not a bus_seq_item!")
   master = that.master;
 endfunction : do_copy
 
@@ -55,7 +55,7 @@ function bit cross_bar_seq_item::do_compare(uvm_object rhs, uvm_comparer compare
   cross_bar_seq_item that;
   bit status;
   if (!$cast(that, rhs)) begin
-    `uvm_error(get_name(), "rhs is not a cross_bar_seq_item!")
+    `uvm_fatal(get_name(), "rhs is not a cross_bar_seq_item!")
     return 0;
   end
   status = super.do_compare(rhs, comparer);

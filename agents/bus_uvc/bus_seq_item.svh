@@ -49,10 +49,10 @@ endfunction : convert2string
 function void bus_seq_item::do_copy(uvm_object rhs);
   bus_seq_item that;
   if (rhs == null)
-    `uvm_error(get_type_name(), "Tried to copy null transaction!")
+    `uvm_fatal(get_type_name(), "Tried to copy null transaction!")
   super.do_copy(rhs);
   if (!$cast(that,rhs))
-    `uvm_error(get_type_name(), "rhs is not a bus_seq_item!")
+    `uvm_fatal(get_type_name(), "rhs is not a bus_seq_item!")
   addr      = that.addr;
   wdata     = that.wdata;
   rdata     = that.rdata;
@@ -65,7 +65,7 @@ function bit bus_seq_item::do_compare(uvm_object rhs, uvm_comparer comparer);
   bit status;
   bus_seq_item that;
   if (!$cast(that, rhs)) begin
-    `uvm_error(get_name(), "rhs is not a bus_seq_item!")
+    `uvm_fatal(get_name(), "rhs is not a bus_seq_item!")
     return 0;
   end
   data_is_equal = (this.write_operation()) ?
