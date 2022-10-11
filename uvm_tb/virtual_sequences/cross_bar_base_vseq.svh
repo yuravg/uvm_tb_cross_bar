@@ -9,78 +9,99 @@ class cross_bar_base_vseq extends uvm_virtual_sequence;
 
   extern function new(string name = "");
 
-  req_t req;
-
   bus_sequencer mseqr[2];
   bus_sequencer sseqr[2];
 
   // master side
-  bus_transaction bus_tr[2];
+  bus_transaction send[2];
   // slave side
   bus_ack ack[2];
 
-  rand int num_sequences;
-  rand int length [2];
+  extern task pre_start();
+  extern task body();
 
-  extern virtual task body();
+  local static bit ack_launched = 0;
+  extern virtual task forever_slave_ack();
 
-  extern task transaction(input req_t req);
-  extern task write(input req_t req);
-  extern task read(input req_t req);
+  extern virtual function void randomize_req(ref req_t req);
 
-  extern protected task forever_ack();
+  local static semaphore sema[2];
+  extern virtual task init_start();
+  extern virtual task init_start_master(int master);
 
 endclass : cross_bar_base_vseq
 
 
 function cross_bar_base_vseq::new(string name = "");
   super.new(name);
-
-  num_sequences = $urandom_range(4, 2);
-  for (int i = 0; i < 2; i++) begin
-    length[i] = $urandom_range(4, 1);
-  end
 endfunction : new
 
 
-task cross_bar_base_vseq::body();
-  req = req_t::type_id::create($sformatf("req"));
-
+task cross_bar_base_vseq::pre_start();
   for (int i = 0; i < 2; i++) begin : declaration
-    bus_tr[i] = bus_transaction::type_id::create($sformatf("bus_tr[%0d]", i));
-    ack[i]    = bus_ack        ::type_id::create($sformatf("ack[%0d]",    i));
+    send[i] = bus_transaction::type_id::create($sformatf("send[%0d]", i));
+    ack[i] = bus_ack::type_id::create($sformatf("ack[%0d]", i));
+    sema[i] = new(1);
   end
+  forever_slave_ack();
+endtask : pre_start
 
-  fork
-    forever_ack();
-  join_none
+
+task cross_bar_base_vseq::body();
+  init_start();
 endtask : body
 
 
-task cross_bar_base_vseq::transaction(input req_t req);
-  int i = req.master;
-  bus_tr[i].req.do_copy(req);
-  `uvm_info("debug", $sformatf("bus_tr[%0d]: %0s",
-                               i, bus_tr[i].req.convert2string()), UVM_HIGH)
-  bus_tr[i].start(mseqr[i]);
-endtask : transaction
+task cross_bar_base_vseq::forever_slave_ack();
+  if (!ack_launched)
+  begin
+    ack_launched = 1;
+    fork
+      forever ack[0].start(sseqr[0]);
+      forever ack[1].start(sseqr[1]);
+    join_none
+  end
+endtask : forever_slave_ack
 
 
-task cross_bar_base_vseq::write(input req_t req);
-  req.operation = req_t::WRITE;
-  transaction(req);
-endtask : write
+function void cross_bar_base_vseq::randomize_req(ref req_t req);
+  if (!req.randomize() with
+      {operation inside {bus_seq_item::READ, bus_seq_item::WRITE};})
+    `uvm_fatal(get_type_name(), "randomize() failed")
+endfunction : randomize_req
 
 
-task cross_bar_base_vseq::read(input req_t req);
-  req.operation = req_t::READ;
-  transaction(req);
-endtask : read
+task cross_bar_base_vseq::init_start();
+  int i;
+  req_t req = req_t::type_id::create("req");
+  randomize_req(req);
+  i = req.master;
+  case (i)
+    0: sema[0].get();
+    1: sema[1].get();
+  endcase
+  send[i].req.do_copy(req);
+  send[i].start(mseqr[i]);
+  case (i)
+    0: sema[0].put();
+    1: sema[1].put();
+  endcase
+endtask : init_start
 
 
-task cross_bar_base_vseq::forever_ack();
-  fork
-    forever ack[0].start(sseqr[0]);
-    forever ack[1].start(sseqr[1]);
-  join_any
-endtask : forever_ack
+task cross_bar_base_vseq::init_start_master(int master);
+  int i;
+  req_t req = req_t::type_id::create("req");
+  randomize_req(req);
+  i = master;
+  case (i)
+    0: sema[0].get();
+    1: sema[1].get();
+  endcase
+  send[i].req.do_copy(req);
+  send[i].start(mseqr[i]);
+  case (i)
+    0: sema[0].put();
+    1: sema[1].put();
+  endcase
+endtask : init_start_master

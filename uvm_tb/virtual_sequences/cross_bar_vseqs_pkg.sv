@@ -20,10 +20,10 @@ package cross_bar_vseqs_pkg;
   typedef cross_bar_seq_item req_t;
 
   `include "cross_bar_base_vseq.svh"
-  `include "cross_bar_transaction.svh"
   `include "cross_bar_write.svh"
   `include "cross_bar_read.svh"
   `include "cross_bar_multi_tr.svh"
+  `include "cross_bar_arbitrage.svh"
 
 endpackage : cross_bar_vseqs_pkg
 

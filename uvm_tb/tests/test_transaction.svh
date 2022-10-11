@@ -8,6 +8,7 @@ class test_transaction extends base_test;
   `uvm_component_utils(test_transaction)
 
   extern function new(string name, uvm_component parent);
+  extern function void build_phase(uvm_phase phase);
   extern task run_phase(uvm_phase phase);
 
 endclass : test_transaction
@@ -18,12 +19,19 @@ function test_transaction::new(string name, uvm_component parent);
 endfunction : new
 
 
+function void test_transaction::build_phase(uvm_phase phase);
+  super.build_phase(phase);
+endfunction : build_phase
+
+
 task test_transaction::run_phase(uvm_phase phase);
+  int num;
   super.run_phase(phase);
 
-  tr.num_sequences = 10;
-
+  num = $urandom_range(10, 20);
   phase.raise_objection(this);
-  tr.start(.sequencer(null));
+  repeat (num) begin
+    vseq.start(null);
+  end
   phase.drop_objection(this);
 endtask : run_phase

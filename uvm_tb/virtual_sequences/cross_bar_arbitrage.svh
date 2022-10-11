@@ -4,27 +4,27 @@
 // License : MIT License
 //-----------------------------------------------------------------------------
 
-class cross_bar_multi_tr extends cross_bar_base_vseq;
-  `uvm_object_utils(cross_bar_multi_tr)
+class cross_bar_arbitrage extends cross_bar_base_vseq;
+  `uvm_object_utils(cross_bar_arbitrage)
 
   extern function new(string name = "");
   extern task body();
 
-endclass : cross_bar_multi_tr
+endclass : cross_bar_arbitrage
 
 
-function cross_bar_multi_tr::new(string name = "");
+function cross_bar_arbitrage::new(string name = "");
   super.new(name);
 endfunction : new
 
 
-task cross_bar_multi_tr::body();
-  repeat (20)
+task cross_bar_arbitrage::body();
+  int num_i = $urandom_range(10, 20);
+  int num_j = $urandom_range(4, 7);
+
+  repeat (num_j)
     fork
-      init_start();
-      init_start();
-      init_start();
-      init_start();
-      init_start();
+      repeat (num_i) init_start_master(0);
+      repeat (num_i) init_start_master(1);
     join
 endtask : body
