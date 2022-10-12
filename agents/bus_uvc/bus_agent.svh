@@ -30,6 +30,8 @@ function void bus_agent::build_phase(uvm_phase phase);
   if (!uvm_config_db #(bus_config)::get(this, "", "config", cfg)) begin
     `uvm_fatal("build_phase", "Unable to get config (type: bus_config) from uvm_config_db")
   end
+  if (cfg.vif == null)
+    `uvm_fatal("build_phase", "Virtual Interface for driver not set!")
 
   ap   = new("ap", this);
   seqr = new("seqr", this);
