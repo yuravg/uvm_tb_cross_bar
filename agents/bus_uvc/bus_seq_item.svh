@@ -15,13 +15,14 @@ class bus_seq_item extends uvm_sequence_item;
   rand operation_e operation;
 
   extern function new(string name = "");
+  extern function string convert2string();
+  extern function void do_copy(uvm_object rhs);
+  extern function bit do_compare(uvm_object rhs, uvm_comparer comparer);
+  extern function void do_record(uvm_recorder recorder);
+
   extern function operation_e cmd2operation(input bit cmd);
   extern function bit write_operation();
   extern function bit read_operation();
-  extern function string convert2string();
-  extern function void do_record(uvm_recorder recorder);
-  extern function bit do_compare(uvm_object rhs, uvm_comparer comparer);
-  extern function void do_copy(uvm_object rhs);
 
 endclass : bus_seq_item
 
@@ -29,26 +30,6 @@ endclass : bus_seq_item
 function bus_seq_item::new(string name = "");
   super.new(name);
 endfunction : new
-
-
-function bus_seq_item::operation_e bus_seq_item::cmd2operation(input bit cmd);
-  operation_e op;
-  if (cmd)
-    op = WRITE;
-  else
-    op = READ;
-  return op;
-endfunction : cmd2operation
-
-
-function bit bus_seq_item::write_operation();
-  return (operation == WRITE) ? 1 : 0;
-endfunction : write_operation
-
-
-function bit bus_seq_item::read_operation();
-  return (operation == READ) ? 1 : 0;
-endfunction : read_operation
 
 
 function string bus_seq_item::convert2string();
@@ -65,13 +46,18 @@ function string bus_seq_item::convert2string();
 endfunction : convert2string
 
 
-function void bus_seq_item::do_record(uvm_recorder recorder);
-  super.do_record(recorder);
-  `uvm_record_field("addr",      addr)
-  `uvm_record_field("wdata",     wdata)
-  `uvm_record_field("rdata",     rdata)
-  `uvm_record_field("operation", operation.name())
-endfunction : do_record
+function void bus_seq_item::do_copy(uvm_object rhs);
+  bus_seq_item that;
+  if (rhs == null)
+    `uvm_error(get_type_name(), "Tried to copy null transaction!")
+  super.do_copy(rhs);
+  if (!$cast(that,rhs))
+    `uvm_error(get_type_name(), "rhs is not a bus_seq_item!")
+  addr      = that.addr;
+  wdata     = that.wdata;
+  rdata     = that.rdata;
+  operation = that.operation;
+endfunction : do_copy
 
 
 function bit bus_seq_item::do_compare(uvm_object rhs, uvm_comparer comparer);
@@ -93,15 +79,30 @@ function bit bus_seq_item::do_compare(uvm_object rhs, uvm_comparer comparer);
 endfunction : do_compare
 
 
-function void bus_seq_item::do_copy(uvm_object rhs);
-  bus_seq_item that;
-  if (rhs == null)
-    `uvm_error(get_type_name(), "Tried to copy null transaction!")
-  super.do_copy(rhs);
-  if (!$cast(that,rhs))
-    `uvm_error(get_type_name(), "rhs is not a bus_seq_item!")
-  addr      = that.addr;
-  wdata     = that.wdata;
-  rdata     = that.rdata;
-  operation = that.operation;
-endfunction : do_copy
+function void bus_seq_item::do_record(uvm_recorder recorder);
+  super.do_record(recorder);
+  `uvm_record_field("addr",      addr)
+  `uvm_record_field("wdata",     wdata)
+  `uvm_record_field("rdata",     rdata)
+  `uvm_record_field("operation", operation.name())
+endfunction : do_record
+
+
+function bus_seq_item::operation_e bus_seq_item::cmd2operation(input bit cmd);
+  operation_e op;
+  if (cmd)
+    op = WRITE;
+  else
+    op = READ;
+  return op;
+endfunction : cmd2operation
+
+
+function bit bus_seq_item::write_operation();
+  return (operation == WRITE) ? 1 : 0;
+endfunction : write_operation
+
+
+function bit bus_seq_item::read_operation();
+  return (operation == READ) ? 1 : 0;
+endfunction : read_operation

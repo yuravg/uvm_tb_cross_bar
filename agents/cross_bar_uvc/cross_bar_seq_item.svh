@@ -10,11 +10,12 @@ class cross_bar_seq_item extends bus_seq_item;
   rand bit master;
 
   extern function new(string name = "");
-  extern function int get_slave_item();
   extern function string convert2string();
-  extern function void do_record(uvm_recorder recorder);
-  extern virtual function bit do_compare(uvm_object rhs, uvm_comparer comparer);
   extern function void do_copy(uvm_object rhs);
+  extern virtual function bit do_compare(uvm_object rhs, uvm_comparer comparer);
+  extern function void do_record(uvm_recorder recorder);
+
+  extern function int get_slave_item();
 
 endclass : cross_bar_seq_item
 
@@ -22,11 +23,6 @@ endclass : cross_bar_seq_item
 function cross_bar_seq_item::new(string name = "");
   super.new(name);
 endfunction : new
-
-
-function int cross_bar_seq_item::get_slave_item();
-  return addr[31];
-endfunction : get_slave_item
 
 
 function string cross_bar_seq_item::convert2string();
@@ -44,10 +40,15 @@ function string cross_bar_seq_item::convert2string();
 endfunction : convert2string
 
 
-function void cross_bar_seq_item::do_record(uvm_recorder recorder);
-  super.do_record(recorder);
-  `uvm_record_field("master", master)
-endfunction : do_record
+function void cross_bar_seq_item::do_copy(uvm_object rhs);
+  cross_bar_seq_item that;
+  if (rhs == null)
+    `uvm_error(get_type_name(), "Tried to copy null transaction!")
+  super.do_copy(rhs);
+  if (!$cast(that,rhs))
+    `uvm_error(get_type_name(), "rhs is not a bus_seq_item!")
+  master = that.master;
+endfunction : do_copy
 
 
 function bit cross_bar_seq_item::do_compare(uvm_object rhs, uvm_comparer comparer);
@@ -63,12 +64,12 @@ function bit cross_bar_seq_item::do_compare(uvm_object rhs, uvm_comparer compare
 endfunction : do_compare
 
 
-function void cross_bar_seq_item::do_copy(uvm_object rhs);
-  cross_bar_seq_item that;
-  if (rhs == null)
-    `uvm_error(get_type_name(), "Tried to copy null transaction!")
-  super.do_copy(rhs);
-  if (!$cast(that,rhs))
-    `uvm_error(get_type_name(), "rhs is not a bus_seq_item!")
-  master = that.master;
-endfunction : do_copy
+function void cross_bar_seq_item::do_record(uvm_recorder recorder);
+  super.do_record(recorder);
+  `uvm_record_field("master", master)
+endfunction : do_record
+
+
+function int cross_bar_seq_item::get_slave_item();
+  return addr[31];
+endfunction : get_slave_item
