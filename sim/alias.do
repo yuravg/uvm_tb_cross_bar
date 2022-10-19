@@ -6,7 +6,7 @@
 # Hi-lock: end
 
 
-alias run_test_test_transaction {
+alias run_test_transaction {
     make compile
     make opt
     vsim cross_bar_tb_opt +UVM_TESTNAME=test_transaction +UVM_VERBOSITY=UVM_LOW -l test_transaction.log
