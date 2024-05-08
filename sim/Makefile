@@ -1,23 +1,26 @@
-
 MAKE = make --no-print-directory
 
-VLOG_OPTIONS = -incr -sv +acc -timescale 1ns/1ps
-VSIM_OPTIONS =
-VLOG = vlog $(VLOG_OPTIONS)
+QUIET_OPTION ?= -quiet
+SCHEMATIC_OP = -debugdb
+
+VLOG = vlog -incr -sv +acc -timescale 1ns/1ps $(QUIET_OPTION)  +incdir+$(UVM_HOME)/src
+VOPT = vopt $(SCHEMATIC_OPTION) $(QUIET_OPTION)
+
 VSIM_MODE ?= "-c"
 END_TIME_VSIM ?= 1ms
 WRITE_RPT ?= "yes"
+VSIM_UVM = +UVM_TESTNAME=$(UVM_TEST) -l $(UVM_TEST).log $(UVM_VERBOSITY) +UVM_NO_RELNOTES
+
+VSIM = $(if $(findstring -c,$(VSIM_MODE)),\
+vsim $(VSIM_UVM) $(QUIET_OPTION) -c $(DUT)_tb_opt -do "run $(END_TIME_VSIM); exit",\
+vsim $(VSIM_UVM) $(QUIET_OPTION) $(SCHEMATIC_OPTION) $(DUT)_tb_opt -do "source ./wave_$(DUT)_tb.do; onfinish stop; run $(END_TIME_VSIM); wave zoom full;" &)
 
 define vlog_pkg
   $(VLOG) +incdir+$(dir $(basename $1)) $1
 endef
 
-UVM_MSG ?= ""
-ifeq ($(UVM_MSG), HIGH)
-  UVM_VERBOSITY=+UVM_VERBOSITY=UVM_HIGH
-else
-  UVM_VERBOSITY=+UVM_VERBOSITY=UVM_LOW
-endif
+UVM_MSG ?= "UVM_LOW"
+UVM_VERBOSITY=+UVM_VERBOSITY=$(UVM_MSG)
 
 DUT = cross_bar
 UVM_TEST ?= test_write
@@ -41,55 +44,41 @@ help:
 	@echo " <test_name>  - run single test, list of tests:"
 	@echo "$(TESTS)"
 
-.PHONY: wlib compile_rtl compile_tb compile opt sim sim_cmd sim_gui write_rpt
-
-wlib:
-	@-if [ ! -d work ] ; then \
-	  vlib work;              \
-	fi
-	vmap work work
+.PHONY: compile_rtl compile_tb compile opt sim
 
 compile_rtl:
-	@$(MAKE) wlib
-	$(VLOG) $(RTL)/bus_if_pkg.sv  \
-			$(RTL)/bus_if.sv      \
-			$(RTL)/bus2bus_mux.sv \
-			$(RTL)/$(DUT).sv
+	@echo "Compiling the RTL..."
+	@$(VLOG) \
+		$(RTL)/bus_if_pkg.sv  \
+		$(RTL)/bus_if.sv      \
+		$(RTL)/bus2bus_mux.sv \
+		$(RTL)/$(DUT).sv
 
 compile_tb:
-	@$(MAKE) wlib
-	$(call vlog_pkg,$(TB)/agents/bus_uvc/bus_agent_pkg.sv)
-	$(call vlog_pkg,$(TB)/agents/cross_bar_uvc/cross_bar_agent_pkg.sv)
-	$(call vlog_pkg,$(TB)/uvm_tb/virtual_sequences/cross_bar_vseqs_pkg.sv)
-	$(call vlog_pkg,$(TB)/uvm_tb/env/env_pkg.sv)
-	$(call vlog_pkg,$(TB)/uvm_tb/tests/test_pkg.sv)
-	$(VLOG) $(TB)/uvm_tb/tb/cross_bar_tb.sv
+	@echo "Compiling the TB..."
+	@$(call vlog_pkg,$(TB)/agents/bus_uvc/bus_agent_pkg.sv)
+	@$(call vlog_pkg,$(TB)/agents/cross_bar_uvc/cross_bar_agent_pkg.sv)
+	@$(call vlog_pkg,$(TB)/uvm_tb/virtual_sequences/cross_bar_vseqs_pkg.sv)
+	@$(call vlog_pkg,$(TB)/uvm_tb/env/env_pkg.sv)
+	@$(call vlog_pkg,$(TB)/uvm_tb/tests/test_pkg.sv)
+	@$(VLOG) $(TB)/uvm_tb/tb/cross_bar_tb.sv
 
 compile:
 	@$(MAKE) compile_rtl
 	@$(MAKE) compile_tb
 
 opt:
-	vopt $(DUT)_tb -o $(DUT)_tb_opt
+	@echo "Optimizing the TB..."
+	@$(VOPT) $(DUT)_tb -o $(DUT)_tb_opt
 
-# NOTE: gui do not write rpt file
+# NOTE: GUI do not write rpt file
+
 sim:
+	@echo "Running simulation..."
+	@$(VSIM)
 	@-if [ "$(VSIM_MODE)" = "-c" ]; then \
-		$(MAKE) sim_cmd;                 \
 		$(MAKE) write_rpt;               \
-	  else                               \
-		$(MAKE) sim_gui;                 \
 	  fi
-
-sim_cmd:
-	vsim -c $(VSIM_OPTIONS) $(DUT)_tb_opt                             \
-		+UVM_TESTNAME=$(UVM_TEST) -l $(UVM_TEST).log $(UVM_VERBOSITY) \
-		-do "run $(END_TIME_VSIM); exit"
-
-sim_gui:
-	vsim $(VSIM_OPTIONS) $(DUT)_tb_opt                                \
-		+UVM_TESTNAME=$(UVM_TEST) -l $(UVM_TEST).log $(UVM_VERBOSITY) \
-		-do "source ./wave_$(DUT)_tb.do; run $(END_TIME_VSIM)" &
 
 write_rpt:
 	@-if [ "$(WRITE_RPT)" = "yes" ]; then            \
@@ -103,11 +92,13 @@ write_rpt:
 .PHONY: clean_log clean
 
 clean_log:
-	rm -rf *.log *.rpt
+	@echo "Cleaning logs..."
+	@rm -rf *.log *.rpt
 
 clean:
 	@$(MAKE) clean_log
-	rm -rf *~ work *.wlf* questa.tops transcript *.vstf wlft??????
+	@echo "Cleaning derived files..."
+	@rm -rf *~ work *.wlf* questa.tops transcript *.vstf wlft??????
 
 # start compilation and simulation by test name
 .PHONY: $(TESTS)
