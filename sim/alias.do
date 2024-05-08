@@ -12,7 +12,9 @@ alias run_test_transaction {
     vsim cross_bar_tb_opt +UVM_TESTNAME=test_transaction +UVM_VERBOSITY=UVM_LOW -l test_transaction.log
     view wave
     do wave_cross_bar_tb.do
+    onfinish stop
     run 1ms
+    wave zoom full
 }
 
 alias run_test_write {
@@ -21,7 +23,9 @@ alias run_test_write {
     vsim cross_bar_tb_opt +UVM_TESTNAME=test_write +UVM_VERBOSITY=UVM_LOW -l test_write.log
     view wave
     do wave_cross_bar_tb.do
+    onfinish stop
     run 1ms
+    wave zoom full
 }
 
 alias run_test_read {
@@ -30,7 +34,9 @@ alias run_test_read {
     vsim cross_bar_tb_opt +UVM_TESTNAME=test_read +UVM_VERBOSITY=UVM_LOW
     view wave
     do wave_cross_bar_tb.do
+    onfinish stop
     run 1ms
+    wave zoom full
 }
 
 alias run_test_multi_tr {
@@ -39,7 +45,9 @@ alias run_test_multi_tr {
     vsim cross_bar_tb_opt +UVM_TESTNAME=test_multi_tr +UVM_VERBOSITY=UVM_LOW -l test_multi_tr.log
     view wave
     do wave_cross_bar_tb.do
+    onfinish stop
     run 1ms
+    wave zoom full
 }
 
 alias run_test_arbitrage {
@@ -48,5 +56,7 @@ alias run_test_arbitrage {
     vsim cross_bar_tb_opt +UVM_TESTNAME=test_arbitrage +UVM_VERBOSITY=UVM_LOW -l test_arbitrage.log
     view wave
     do wave_cross_bar_tb.do
+    onfinish stop
     run 1ms
+    wave zoom full
 }
